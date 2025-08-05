@@ -1,9 +1,10 @@
 import React from "react";
+import Sidebar from "../components/Sidebar";
 
 export default function Dashboard() {
   return (
-    <div className="flex items-center justify-center h-screen text-3xl font-bold">
-      This is Dashboard
+    <div className="flex">
+      <Sidebar />
     </div>
   );
 }
