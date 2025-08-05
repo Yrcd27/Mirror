@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import heroImage from "../assets/mirror-hero.jpg"; // replace with your image path
 
 export default function HeroSection() {
@@ -19,7 +20,7 @@ export default function HeroSection() {
 
         {/* Button */}
         <button className="bg-black text-white px-6 py-3 rounded-md text-lg hover:bg-gray-800 transition">
-          Get Started
+          <Link to="/login">Get Started</Link>
         </button>
       </div>
 

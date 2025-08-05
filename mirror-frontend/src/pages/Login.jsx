@@ -1,0 +1,131 @@
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ Import navigation hook
+import loginImage from "../assets/login-image.png"; // replace with your actual login image
+
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "", rememberMe: false });
+  const [errors, setErrors] = useState({});
+  const [success, setSuccess] = useState("");
+  const navigate = useNavigate(); // ✅ Hook for navigation
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    setErrors({ ...errors, [name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    let newErrors = {};
+
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email: formData.email,
+        password: formData.password
+      });
+
+      setSuccess("Login successful!");
+      localStorage.setItem("token", res.data.token);
+
+      // Optional: Save email if rememberMe is checked
+      if (formData.rememberMe) {
+        localStorage.setItem("rememberedEmail", formData.email);
+      } else {
+        localStorage.removeItem("rememberedEmail");
+      }
+
+      // ✅ Navigate to dashboard after login
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 500); // Small delay so user sees "Login successful!"
+
+    } catch (err) {
+      setErrors({ api: err.response?.data?.message || "Login failed" });
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Left Section - Form */}
+      <div className="w-1/2 flex flex-col justify-center px-16">
+        <h1 className="text-4xl font-bold mb-4">Login</h1>
+        <p className="text-gray-600 mb-8">Login to access your Mirror account</p>
+
+        {errors.api && <p className="text-red-500 mb-4">{errors.api}</p>}
+        {success && <p className="text-green-500 mb-4">{success}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email Field */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Email</label>
+            <input
+              type="email"
+              name="email"
+              placeholder="john.doe@gmail.com"
+              className="w-full border px-4 py-2 rounded"
+              onChange={handleChange}
+              value={formData.email}
+            />
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+          </div>
+
+          {/* Password Field */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Password</label>
+            <input
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              className="w-full border px-4 py-2 rounded"
+              onChange={handleChange}
+              value={formData.password}
+            />
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+          </div>
+
+          {/* Remember Me */}
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              name="rememberMe"
+              checked={formData.rememberMe}
+              onChange={handleChange}
+              className="mr-2"
+            />
+            <label className="text-sm">Remember me</label>
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+          >
+            Login
+          </button>
+        </form>
+
+        {/* Sign Up Link */}
+        <p className="mt-4 text-sm text-gray-600">
+          Don’t have an account?{" "}
+          <a href="/signup" className="text-red-500">
+            Sign up
+          </a>
+        </p>
+      </div>
+
+      {/* Right Section - Image */}
+      <div className="w-1/2 flex items-center justify-center bg-gray-100">
+        <img src={loginImage} alt="Login Illustration" className="max-w-sm" />
+      </div>
+    </div>
+  );
+}
