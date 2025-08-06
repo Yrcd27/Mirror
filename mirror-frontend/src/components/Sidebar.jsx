@@ -5,6 +5,11 @@ import logo from "../assets/logo192.png";
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
   return (
     <div className={`flex`}>
       {/* Sidebar */}
@@ -22,25 +27,27 @@ export default function Sidebar() {
 
           {/* Menu Items */}
           <nav className="mt-6 space-y-6 text-center">
-            <a href="/journal" className="block hover:text-gray-400">
+            <a href="/dashboard" className="block hover:text-gray-400">
               Journal
             </a>
             <a href="/profile" className="block hover:text-gray-400">
-              User Profile
+              Profile
             </a>
             <a
-                href="/new-entry"
-                className="block bg-white text-black px-4 py-2 rounded-full hover:bg-gray-20 text-center"
-              >
-                + New Entry
-              </a>
-
+              href="/new-entry"
+              className="block bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 text-center"
+            >
+              + New Entry
+            </a>
           </nav>
         </div>
 
         {/* Bottom Section */}
         <div className="py-6 text-center">
-          <button className="flex items-center justify-center w-full hover:text-gray-400">
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center w-full hover:text-gray-400"
+          >
             <HiOutlineLogout size={20} />
             {isOpen && <span className="ml-2">Logout</span>}
           </button>

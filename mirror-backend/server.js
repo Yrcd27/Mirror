@@ -4,17 +4,19 @@ const cors = require("cors");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
-const journalRoutes = require("./routes/journalRoutes"); // ✅ Import journal routes
+const journalRoutes = require("./routes/journalRoutes");
+const profileRoutes = require("./routes/profileRoutes"); // ✅ Import profile routes
 
 const app = express();
 
 // Middleware
-app.use(cors()); // allows frontend to call backend
-app.use(express.json()); // lets backend read JSON from requests
+app.use(cors());
+app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes);       // Auth routes
-app.use("/api/journals", journalRoutes); // ✅ Journal routes
+app.use("/api/auth", authRoutes);        // Auth routes
+app.use("/api/journals", journalRoutes); // Journal routes
+app.use("/api/profile", profileRoutes);  // ✅ Profile routes
 
 // Connect to MongoDB and start server
 mongoose

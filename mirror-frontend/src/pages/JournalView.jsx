@@ -8,6 +8,9 @@ export default function JournalView() {
   const [content, setContent] = useState("");
   const [mood, setMood] = useState("");
   const [image, setImage] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+
+  const moods = ["😀", "😢", "😡", "😌", "😴"];
 
   useEffect(() => {
     const fetchJournal = async () => {
@@ -29,11 +32,20 @@ export default function JournalView() {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:5000/api/journals/${id}`,
-        { content, mood, image },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const formData = new FormData();
+      formData.append("content", content);
+      formData.append("mood", mood);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      await axios.put(`http://localhost:5000/api/journals/${id}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
       navigate("/dashboard");
     } catch (err) {
       console.error("Error updating journal", err);
@@ -60,17 +72,44 @@ export default function JournalView() {
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
+
+      {image && (
+        <img
+          src={`data:image/jpeg;base64,${image}`}
+          alt="Journal"
+          className="my-4 max-w-xs rounded"
+        />
+      )}
+
       <div className="flex items-center justify-between bg-white text-black p-2 rounded-full mt-4">
         <span>{new Date().toDateString()}</span>
+
+        {/* Mood Selector */}
+        <div className="flex items-center space-x-2">
+          {mood ? (
+            <span
+              className="text-2xl cursor-pointer"
+              onClick={() => setMood("")}
+            >
+              {mood}
+            </span>
+          ) : (
+            moods.map((m) => (
+              <span
+                key={m}
+                className="text-2xl cursor-pointer hover:scale-125 transition"
+                onClick={() => setMood(m)}
+              >
+                {m}
+              </span>
+            ))
+          )}
+        </div>
+
         <input
-          placeholder="Mood (optional)"
-          value={mood}
-          onChange={(e) => setMood(e.target.value)}
-        />
-        <input
-          placeholder="Image URL (optional)"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={(e) => setImageFile(e.target.files[0])}
         />
         <button
           onClick={handleDelete}

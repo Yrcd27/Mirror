@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import NewEntry from "./pages/NewEntry";
 import JournalView from "./pages/JournalView";
+import ProfilePage from "./pages/ProfilePage"; // ✅ Import profile page
 
 export default function App() {
   return (
@@ -14,7 +15,8 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/new-entry" element={<NewEntry />} />
-       <Route path="/journal/:id" element={<JournalView />} />
+      <Route path="/journal/:id" element={<JournalView />} />
+      <Route path="/profile" element={<ProfilePage />} /> {/* ✅ New route */}
     </Routes>
   );
 }

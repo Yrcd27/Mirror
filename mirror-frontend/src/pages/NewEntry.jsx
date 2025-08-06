@@ -3,19 +3,32 @@ import axios from "axios";
 
 export default function NewEntry() {
   const [content, setContent] = useState("");
-  const [mood, setMood] = useState("");
-  const [image, setImage] = useState("");
+  const [mood, setMood] = useState(""); // emoji
+  const [imageFile, setImageFile] = useState(null);
+
+  const moods = ["😀", "😢", "😡", "😌", "😴"]; // journal moods
 
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:5000/api/journals", 
-        { content, mood, image },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+
+      const formData = new FormData();
+      formData.append("content", content);
+      formData.append("mood", mood);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      await axios.post("http://localhost:5000/api/journals", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data"
+        }
+      });
+
       window.location.href = "/dashboard";
     } catch (err) {
-      console.error(err);
+      console.error("Error saving journal:", err);
     }
   };
 
@@ -27,11 +40,43 @@ export default function NewEntry() {
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
+
       <div className="flex items-center justify-between bg-white text-black p-2 rounded-full mt-4">
         <span>Today</span>
-        <input placeholder="Mood (optional)" value={mood} onChange={(e) => setMood(e.target.value)} />
-        <input placeholder="Image URL (optional)" value={image} onChange={(e) => setImage(e.target.value)} />
-        <button onClick={handleSubmit} className="bg-black text-white px-4 py-1 rounded-full">Save</button>
+
+        {/* Mood Selector */}
+        <div className="flex items-center space-x-2">
+          {mood ? (
+            <span
+              className="text-2xl cursor-pointer"
+              onClick={() => setMood("")} // reset mood if clicked
+            >
+              {mood}
+            </span>
+          ) : (
+            moods.map((m) => (
+              <span
+                key={m}
+                className="text-2xl cursor-pointer hover:scale-125 transition"
+                onClick={() => setMood(m)}
+              >
+                {m}
+              </span>
+            ))
+          )}
+        </div>
+
+        <input
+          type="file"
+          accept="image/png, image/jpeg"
+          onChange={(e) => setImageFile(e.target.files[0])}
+        />
+        <button
+          onClick={handleSubmit}
+          className="bg-black text-white px-4 py-1 rounded-full"
+        >
+          Save
+        </button>
       </div>
     </div>
   );
