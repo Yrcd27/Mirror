@@ -28,9 +28,13 @@ export default function Sidebar() {
             <a href="/profile" className="block hover:text-gray-400">
               User Profile
             </a>
-            <button className="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200">
-              + New Entry
-            </button>
+            <a
+                href="/new-entry"
+                className="block bg-white text-black px-4 py-2 rounded-full hover:bg-gray-20 text-center"
+              >
+                + New Entry
+              </a>
+
           </nav>
         </div>
 
@@ -50,9 +54,6 @@ export default function Sidebar() {
       >
         {isOpen ? "<" : ">"}
       </button>
-
-      {/* Content Area */}
-      <div className="flex-1 p-6">Your main content here</div>
     </div>
   );
 }
