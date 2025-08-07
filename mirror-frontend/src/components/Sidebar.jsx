@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { HiOutlineLogout } from "react-icons/hi";
 import logo from "../assets/logo192.png";
+import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -11,52 +12,50 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`flex`}>
-      {/* Sidebar */}
-      <div
-        className={`bg-black text-white flex flex-col justify-between h-screen transition-all duration-300
-        ${isOpen ? "w-48" : "w-16"} md:w-48`}
-      >
-        {/* Top Section */}
-        <div>
-          {/* Logo */}
-          <div className="flex items-center justify-center py-6 border-b border-gray-700">
-            <img src={logo} alt="Mirror Logo" className="w-8 h-8 mr-2" />
-            {isOpen && <span className="text-lg font-bold">Mirror</span>}
-          </div>
-
-          {/* Menu Items */}
-          <nav className="mt-6 space-y-6 text-center">
-            <a href="/dashboard" className="block hover:text-gray-400">
-              Journal
-            </a>
-            <a href="/profile" className="block hover:text-gray-400">
-              Profile
-            </a>
-            <a
-              href="/new-entry"
-              className="block bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 text-center"
-            >
-              + New Entry
-            </a>
-          </nav>
+    <div
+      className={`bg-black text-white flex flex-col justify-between h-screen fixed top-0 left-0 py-6 transition-all duration-300 z-10 ${
+        isOpen ? "w-60" : "w-16"
+      }`}
+    >
+      {/* Top Section */}
+      <div>
+        {/* Logo */}
+        <div className="flex items-center justify-center py-6">
+          <img src={logo} alt="Mirror Logo" className="w-10 h-10 mr-2" />
+          {isOpen && <span className="text-3xl font-bold">Mirror</span>}
         </div>
 
-        {/* Bottom Section */}
-        <div className="py-6 text-center">
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center w-full hover:text-gray-400"
+        {/* Menu Items */}
+        <nav className="mt-6 flex flex-col items-center py-10 gap-10">
+          <Link to="/dashboard" className="hover:text-gray-400 text-m font-bold">
+            Journal
+          </Link>
+          <Link to="/profile" className="hover:text-gray-400 text-m font-bold">
+            Profile
+          </Link>
+          <Link
+            to="/new-entry"
+            className="bg-white text-black w-40 py-2 rounded-full hover:bg-gray-200 text-center text-m font-bold"
           >
-            <HiOutlineLogout size={20} />
-            {isOpen && <span className="ml-2">Logout</span>}
-          </button>
-        </div>
+            + New Entry
+          </Link>
+        </nav>
       </div>
 
-      {/* Toggle Button (Mobile) */}
+      {/* Bottom Section */}
+      <div className="py-6 text-center">
+        <button
+          onClick={handleLogout}
+          className="flex items-center justify-center w-full hover:text-gray-400"
+        >
+          <HiOutlineLogout size={20} />
+          {isOpen && <span className="ml-2">Logout</span>}
+        </button>
+      </div>
+
+      {/* Toggle Button (mobile view only) */}
       <button
-        className="md:hidden absolute top-4 left-4 bg-black text-white p-2 rounded"
+        className="md:hidden absolute top-4 right-[-2rem] bg-black text-white p-2 rounded"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? "<" : ">"}

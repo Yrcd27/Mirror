@@ -11,7 +11,7 @@ export default function JournalDashboard() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get("http://localhost:5000/api/journals", {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
         setJournals(res.data);
       } catch (err) {
@@ -21,22 +21,56 @@ export default function JournalDashboard() {
     fetchJournals();
   }, []);
 
+  // Get current Month and Year
+  const currentDate = new Date();
+  const currentMonthYear = currentDate.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className="flex">
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold">Journal</h1>
-        <p className="text-gray-500 mb-6">August 2025</p>
-        <div className="space-y-4">
-          {journals.map((j) => (
-            <div
-              key={j._id}
-              className="bg-black text-white p-4 rounded-lg cursor-pointer hover:bg-gray-800"
-              onClick={() => navigate(`/journal/${j._id}`)}
-            >
-              <p>{new Date(j.createdAt).toDateString()}</p>
-              <p className="truncate">{j.content}</p>
-            </div>
-          ))}
+      {/* Sidebar space */}
+      <div className="w-50 hidden md:block"></div>
+
+      {/* Main content */}
+      <div className="flex-1 bg-white min-h-screen px-6 sm:px-10 md:px-20 lg:px-40 py-16">
+        <div className="flex flex-col items-start space-y-6">
+          {/* Header */}
+          <h1 className="text-3xl font-bold mb-1">Journal</h1>
+          <p className="text-lg text-gray-600 mb-10">{currentMonthYear}</p>
+
+          {/* Journal List */}
+          <div className="space-y-6">
+            {journals.map((j) => {
+              const date = new Date(j.createdAt);
+              const weekday = date.toLocaleDateString("en-US", {
+                weekday: "short",
+              });
+              const day = date.getDate().toString().padStart(2, "0");
+
+              return (
+                <div
+                  key={j._id}
+                  onClick={() => navigate(`/journal/${j._id}`)}
+                  className="bg-black text-white px-6 py-5 rounded-2xl cursor-pointer hover:bg-gray-800 transition duration-200 shadow-md flex items-center gap-6 min-h-[110px] w-[950px] max-w-full"
+                >
+                  {/* Date Box */}
+                  <div className="flex flex-col items-center justify-center w-16 h-16 bg-gray-900 rounded-xl font-bold shrink-0">
+                    <div className="text-xs text-gray-400 uppercase">{weekday}</div>
+                    <div className="text-2xl text-white">{day}</div>
+                  </div>
+
+                  {/* Content Box */}
+                  <div className="flex-1">
+                    <p className="text-white text-base leading-relaxed break-words">
+                      {j.content}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
