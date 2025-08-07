@@ -20,7 +20,7 @@ export default function Sidebar() {
       {/* Top Section */}
       <div>
         {/* Logo */}
-        <div className="flex items-center justify-center py-6">
+        <div className="flex items-center justify-center py-10">
           <img src={logo} alt="Mirror Logo" className="w-10 h-10 mr-2" />
           {isOpen && <span className="text-3xl font-bold">Mirror</span>}
         </div>
