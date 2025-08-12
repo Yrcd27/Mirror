@@ -5,10 +5,15 @@ import { Link } from "react-router-dom";
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
+  const performLogout = () => {
+    setLoggingOut(true);
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      window.location.href = "/";
+    }, 500); // small delay for UI feedback
   };
 
   return (
@@ -27,15 +32,15 @@ export default function Sidebar() {
 
         {/* Menu Items */}
         <nav className="mt-6 flex flex-col items-center py-10 gap-10">
-          <Link to="/dashboard" className="hover:text-gray-400 text-m font-bold">
+          <Link to="/dashboard" className="hover:text-[#7a7ffb] text-m font-bold">
             Journal
           </Link>
-          <Link to="/profile" className="hover:text-gray-400 text-m font-bold">
+          <Link to="/profile" className="hover:text-[#7a7ffb] text-m font-bold">
             Profile
           </Link>
           <Link
             to="/new-entry"
-            className="bg-white text-black w-40 py-2 rounded-full hover:bg-gray-200 text-center text-m font-bold"
+            className="bg-[#7a7ffb] text-white w-40 py-2 rounded-full hover:bg-gray-200 hover:text-black text-center text-m font-bold"
           >
             + New Entry
           </Link>
@@ -45,8 +50,8 @@ export default function Sidebar() {
       {/* Bottom Section */}
       <div className="py-6 text-center">
         <button
-          onClick={handleLogout}
-          className="flex items-center justify-center w-full hover:text-gray-400"
+          onClick={() => setShowConfirm(true)}
+          className="flex items-center justify-center w-full hover:text-[#7a7ffb]"
         >
           <HiOutlineLogout size={20} />
           {isOpen && <span className="ml-2">Logout</span>}
@@ -60,6 +65,42 @@ export default function Sidebar() {
       >
         {isOpen ? "<" : ">"}
       </button>
+
+      {/* Logout Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowConfirm(false)}
+          />
+          {/* Dialog */}
+          <div className="relative z-10 w-11/12 max-w-md rounded-2xl bg-[#1c1b2a] text-white border border-white/10 shadow-xl p-6">
+            <h3 className="text-lg font-semibold">Logout?</h3>
+            <p className="mt-2 text-white/80">
+              Are you sure you want to log out of your account?
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded border border-white/20 bg-white/10 hover:bg-white/20"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={performLogout}
+                disabled={loggingOut}
+                className={`px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white ${
+                  loggingOut ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {loggingOut ? "Logging out..." : "Logout"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

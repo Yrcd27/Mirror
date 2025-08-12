@@ -9,11 +9,8 @@ export default function ProfilePage() {
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <Sidebar />
-
       {/* Main Content */}
-      <div className="flex-1 bg-white p-6 overflow-auto">
-        <UserProfile />
-      </div>
+      <UserProfile />
     </div>
   );
 }

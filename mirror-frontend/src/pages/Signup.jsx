@@ -71,12 +71,12 @@ export default function Signup() {
   return (
     <div className="flex min-h-screen">
       {/* Left side - image */}
-      <div className="w-1/2 flex items-center justify-center bg-gray-100">
+      <div className="w-1/2 flex justify-center bg-gray-100">
         <img src={signupImage} alt="Signup" className="max-w-sm rounded-lg" />
       </div>
 
       {/* Right side - form */}
-      <div className="w-1/2 flex flex-col justify-center px-16">
+      <div className="w-1/2 flex flex-col justify-start px-25 pt-25">
         <h1 className="text-4xl font-bold mb-4">Sign up</h1>
         <p className="text-gray-600 mb-8">
           Let’s get you all set up so you can access your personal account.

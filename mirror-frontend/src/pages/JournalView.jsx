@@ -1,13 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import {
-  FiSmile,
-  FiImage,
-  FiTrash,
-  FiSave,
-  FiCalendar
-} from "react-icons/fi";
+import { FiSmile, FiTrash, FiSave, FiCalendar } from "react-icons/fi";
 
 export default function JournalView() {
   const { id } = useParams();
@@ -15,35 +9,37 @@ export default function JournalView() {
 
   const [content, setContent] = useState("");
   const [mood, setMood] = useState("");
-  const [image, setImage] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [showMoodPicker, setShowMoodPicker] = useState(false);
+  const [createdAt, setCreatedAt] = useState(null);
 
+  const [showMoodPicker, setShowMoodPicker] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+
+  // 10 emojis
   const moodOptions = [
     { label: "happy", emoji: "😃" },
     { label: "sad", emoji: "😢" },
     { label: "angry", emoji: "😡" },
     { label: "calm", emoji: "😌" },
-    { label: "sleepy", emoji: "😴" }
+    { label: "sleepy", emoji: "😴" },
+    { label: "excited", emoji: "🤩" },
+    { label: "crying", emoji: "😭" },
+    { label: "frustrated", emoji: "😤" },
+    { label: "blessed", emoji: "😇" },
+    { label: "thinking", emoji: "🤔" },
   ];
-
-  const today = new Date().toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric"
-  });
 
   useEffect(() => {
     const fetchJournal = async () => {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(`http://localhost:5000/api/journals/${id}`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         setContent(res.data.content || "");
         setMood(res.data.mood || "");
-        setImage(res.data.image || "");
+        setCreatedAt(res.data.createdAt || null);
       } catch (err) {
         console.error("Error fetching journal", err);
       }
@@ -54,49 +50,54 @@ export default function JournalView() {
   const handleUpdate = async () => {
     try {
       const token = localStorage.getItem("token");
+      // Keep FormData + multipart to avoid backend changes
       const formData = new FormData();
       formData.append("content", content);
       formData.append("mood", mood);
-      if (imageFile) formData.append("image", imageFile);
 
       await axios.put(`http://localhost:5000/api/journals/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "multipart/form-data",
+        },
       });
-
       navigate("/dashboard");
     } catch (err) {
       console.error("Error updating journal", err);
     }
   };
 
-  const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this entry?")) return;
+  const handleDelete = () => setShowConfirm(true);
+
+  const performDelete = useCallback(async () => {
     try {
+      setDeleting(true);
       const token = localStorage.getItem("token");
       await axios.delete(`http://localhost:5000/api/journals/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/dashboard");
     } catch (err) {
       console.error("Error deleting journal", err);
+    } finally {
+      setDeleting(false);
+      setShowConfirm(false);
     }
-  };
+  }, [id, navigate]);
 
-  const handleReset = () => {
-    setContent("");
-    setMood("");
-    setImage("");
-    setImageFile(null);
-    setShowMoodPicker(false);
-  };
+  const formattedDate = createdAt
+    ? new Date(createdAt)
+        .toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        })
+        .toUpperCase()
+    : "…";
 
   return (
     <div className="h-screen bg-black text-white flex justify-center">
       <div className="relative w-full max-w-3xl px-4 pt-16 pb-36">
-
         {/* Close Button */}
         <Link to="/dashboard">
           <button
@@ -116,22 +117,14 @@ export default function JournalView() {
           onChange={(e) => setContent(e.target.value)}
         />
 
-        {/* Image Preview */}
-        {image && !imageFile && (
-          <img
-            src={`data:image/jpeg;base64,${image}`}
-            alt="Uploaded"
-            className="my-4 rounded-xl max-w-full h-auto"
-          />
-        )}
-
-        {/* Mood Picker Popup */}
+        {/* Mood Picker Popup (10 emojis) */}
         {showMoodPicker && (
-          <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl shadow-lg flex space-x-2 z-50">
+          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl shadow-lg flex flex-wrap gap-2 justify-center z-50">
             {moodOptions.map((m) => (
-              <span
+              <button
+                type="button"
                 key={m.label}
-                className="text-2xl cursor-pointer hover:scale-125 transition"
+                className="text-2xl leading-none hover:scale-125 transition"
                 title={m.label}
                 onClick={() => {
                   setMood(m.emoji);
@@ -139,64 +132,87 @@ export default function JournalView() {
                 }}
               >
                 {m.emoji}
-              </span>
+              </button>
             ))}
           </div>
         )}
 
-        {/* Bottom Panel */}
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-full max-w-3xl px-4">
-          <div className="flex items-center justify-between bg-white text-black px-5 py-3 rounded-full shadow-xl text-lg space-x-2">
+        {/* Bottom Panel — date (left) • icons (center) • round Save (right) */}
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-40">
+          <div className="bg-white text-black px-6 py-3 rounded-full shadow-xl">
+            <div className="flex items-center">
+              {/* LEFT — date */}
+              <div className="flex items-center gap-2 pl-2 shrink-0">
+                <FiCalendar className="text-2xl" />
+                <span className="text-sm font-medium tracking-wide">
+                  {formattedDate}
+                </span>
+              </div>
 
-            {/* Date */}
-            <div className="flex items-center space-x-1 text-sm font-medium pl-2">
-              <FiCalendar className="text-2xl" />
-              <span className="text-sm">{today.toUpperCase()}</span>
+              {/* CENTER — two icons, centered & evenly spaced */}
+              <div className="flex-1 flex justify-center items-center gap-40">
+                {/* Mood */}
+                <button
+                  onClick={() => setShowMoodPicker(!showMoodPicker)}
+                  className="text-2xl hover:scale-110 transition"
+                  title="Select Mood"
+                >
+                  {mood ? <span className="text-2xl">{mood}</span> : <FiSmile />}
+                </button>
+
+                {/* Delete */}
+                <button
+                  onClick={handleDelete}
+                  className="text-2xl hover:scale-110 transition text-black"
+                  title="Delete Entry"
+                >
+                  <FiTrash />
+                </button>
+              </div>
+
+              {/* RIGHT — round Save */}
+              <button
+                onClick={handleUpdate}
+                className="ml-4 w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-900 transition shrink-0"
+                title="Save Entry"
+              >
+                <FiSave className="text-xl" />
+              </button>
             </div>
-
-            {/* Mood Selector */}
-            <button
-              onClick={() => setShowMoodPicker(!showMoodPicker)}
-              className="text-2xl hover:scale-110 transition"
-              title="Select Mood"
-            >
-              {mood || <FiSmile />}
-            </button>
-
-            {/* Image Upload */}
-            <label className="cursor-pointer text-2xl hover:scale-110 transition" title="Add Image">
-              <FiImage />
-              <input
-                type="file"
-                accept="image/png, image/jpeg"
-                className="hidden"
-                onChange={(e) => {
-                  setImageFile(e.target.files[0]);
-                  setImage(""); // Clear old image preview
-                }}
-              />
-            </label>
-
-            {/* Delete Entry */}
-            <button
-              onClick={handleDelete}
-              className="text-2xl hover:scale-110 text-red-600 transition"
-              title="Delete Entry"
-            >
-              <FiTrash />
-            </button>
-
-            {/* Save Changes */}
-            <button
-              onClick={handleUpdate}
-              className="text-2xl text-white bg-black rounded-full p-2 hover:bg-gray-900 transition"
-              title="Save Entry"
-            >
-              <FiSave />
-            </button>
           </div>
         </div>
       </div>
+
+      {/* Confirm Delete Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setShowConfirm(false)} />
+          <div className="relative z-10 w-11/12 max-w-md rounded-2xl bg-[#1c1b2a] text-white border border-white/10 shadow-xl p-6">
+            <h3 className="text-lg font-semibold">Delete this entry?</h3>
+            <p className="mt-2 text-white/80">
+              This action can’t be undone. The journal entry will be permanently deleted.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded border border-white/20 bg-white/10 hover:bg-white/20"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={performDelete}
+                disabled={deleting}
+                className={`px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white ${
+                  deleting ? "opacity-70 cursor-not-allowed" : ""
+                }`}
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
