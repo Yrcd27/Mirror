@@ -6,7 +6,11 @@ function JournalSkeleton() {
   return (
     <div className="space-y-4">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="h-28 max-w-[950px] w-full rounded-2xl bg-white/10 animate-pulse" />
+        <div 
+          key={i} 
+          className="h-28 max-w-[950px] w-full rounded-2xl bg-white/10 animate-pulse"
+          style={{ animationDelay: `${i * 150}ms` }}
+        />
       ))}
     </div>
   );
@@ -17,6 +21,7 @@ export default function JournalDashboard() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [fadeIn, setFadeIn] = useState(false);
   const fetching = useRef(false); // prevent duplicate calls
   const didFetchFirst = useRef(false); // guard StrictMode
   const navigate = useNavigate();
@@ -34,6 +39,8 @@ export default function JournalDashboard() {
       setItems(replace ? newItems : [...items, ...newItems]);
       setHasMore(more);
       setPage(p + 1);
+      // Trigger fade-in animation after data loads
+      setFadeIn(true);
     } catch (err) {
       console.error(err);
     } finally {
@@ -46,6 +53,15 @@ export default function JournalDashboard() {
     if (didFetchFirst.current) return;
     didFetchFirst.current = true;
     loadPage(1, true);
+  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+  // We're intentionally not adding loadPage as a dependency to prevent reloading
+
+  // Apply fade-in effect on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFadeIn(true);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const currentMonthYear = new Date().toLocaleDateString("en-US", {
@@ -73,15 +89,37 @@ export default function JournalDashboard() {
             }}>Journal</h1>
           <p className="text-lg text-white/80 mb-3">{currentMonthYear}</p>
 
+          {/* Add fade-in animation styles */}
+          <style>{`
+            @keyframes fadeIn {
+              from { opacity: 0; transform: translateY(10px); }
+              to { opacity: 1; transform: translateY(0); }
+            }
+            .fade-in {
+              animation: fadeIn 0.5s ease-out forwards;
+              opacity: 0;
+            }
+            .staggered-fade-in > * {
+              animation: fadeIn 0.5s ease-out forwards;
+              opacity: 0;
+            }
+            .staggered-fade-in > *:nth-child(1) { animation-delay: 0.05s; }
+            .staggered-fade-in > *:nth-child(2) { animation-delay: 0.1s; }
+            .staggered-fade-in > *:nth-child(3) { animation-delay: 0.15s; }
+            .staggered-fade-in > *:nth-child(4) { animation-delay: 0.2s; }
+            .staggered-fade-in > *:nth-child(5) { animation-delay: 0.25s; }
+            .staggered-fade-in > *:nth-child(n+6) { animation-delay: 0.3s; }
+          `}</style>
+
           {/* List / Skeleton / Empty */}
           {loading ? (
             <JournalSkeleton />
           ) : items.length === 0 ? (
-            <div className="text-white/70">
+            <div className="text-white/70 fade-in">
               No entries yet. Click <span className="font-semibold">+ New Entry</span> to start.
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 staggered-fade-in">
               {items.map((j) => {
                 const date = new Date(j.createdAt);
                 const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
