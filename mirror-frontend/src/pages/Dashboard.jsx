@@ -4,7 +4,7 @@ import JournalDashboard from "../components/JournalDashboard";
 
 export default function Dashboard() {
   return (
-    <div className="flex">
+    <div>
       <Sidebar />
       <JournalDashboard />
     </div>

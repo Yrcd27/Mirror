@@ -10,6 +10,8 @@ export default function UserProfile() {
   const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [animateIn, setAnimateIn] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function UserProfile() {
 
   const handleSave = async () => {
     try {
+      setSaving(true);
       const token = localStorage.getItem("token");
       const formData = new FormData();
 
@@ -48,9 +51,12 @@ export default function UserProfile() {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      alert("Profile saved successfully");
+      // Show success modal instead of alert
+      setShowSuccessModal(true);
     } catch (err) {
       console.error(err);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -107,6 +113,23 @@ export default function UserProfile() {
         @keyframes pulse {
           0% { background-position: 200% 0; }
           100% { background-position: -200% 0; }
+        }
+        @keyframes modalFadeIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .modal-animation {
+          animation: modalFadeIn 0.3s ease-out forwards;
+        }
+        @keyframes checkmarkAnimation {
+          0% { stroke-dashoffset: 100; }
+          100% { stroke-dashoffset: 0; }
+        }
+        .checkmark-animation {
+          stroke-dasharray: 100;
+          stroke-dashoffset: 100;
+          animation: checkmarkAnimation 0.8s ease-in-out forwards;
+          animation-delay: 0.2s;
         }
       `}</style>
 
@@ -262,12 +285,14 @@ export default function UserProfile() {
 
           <button
             onClick={handleSave}
-            className="px-6 py-2 rounded shadow
+            disabled={saving}
+            className={`px-6 py-2 rounded shadow
                       bg-white/10 hover:bg-white/20
                       border border-white/20 text-white
-                      transition-all duration-300 transform hover:scale-105"
+                      transition-all duration-300 transform hover:scale-105
+                      ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
           >
-            Save
+            {saving ? "Saving..." : "Save"}
           </button>
         </div>
       )}
@@ -306,6 +331,36 @@ export default function UserProfile() {
                 }`}
               >
                 {deleting ? "Deleting..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          aria-modal="true"
+          role="dialog"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setShowSuccessModal(false)}
+          />
+          {/* Dialog */}
+          <div className="relative z-10 w-11/12 max-w-md rounded-2xl bg-[#1c1b2a] text-white border border-white/10 shadow-xl p-6 modal-animation">
+            <h3 className="text-lg font-semibold">Profile updated</h3>
+            <p className="mt-2 text-white/80">
+              Your profile has been updated successfully.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowSuccessModal(false)}
+                className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+              >
+                OK
               </button>
             </div>
           </div>

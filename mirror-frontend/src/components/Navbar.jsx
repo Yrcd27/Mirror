@@ -14,10 +14,11 @@ export default function Navbar() {
 
       {/* Right section: Button */}
       <button
-        className="border border-white rounded-full px-6 py-3 text-lg text-white hover:text-[#7a7ffb] hover:border-[#7a7ffb] transition-colors duration-300"
+        className="border-2 border-white rounded-full px-6 py-3 text-lg text-white hover:text-[#7a7ffb] hover:border-[#7a7ffb] transition-colors duration-300"
       >
         <Link to="/login">Get Started</Link>
       </button>
+
 
     </nav>
   );

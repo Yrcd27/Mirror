@@ -3,10 +3,10 @@ import React from "react";
 export default function ScrollDownIndicator() {
   return (
     <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-bounce">
-      <div className="w-6 h-10 border-2 border-white rounded-full flex items-start justify-center p-1">
-        <div className="w-1.5 h-3 bg-white rounded-full animate-scroll"></div>
+      <div className="w-6 h-10 border-2 border-[#7a7ffb] rounded-full flex items-start justify-center p-1">
+        <div className="w-1.5 h-3 bg-[#7a7ffb] rounded-full animate-scroll"></div>
       </div>
-      <span className="mt-2 text-sm text-white/70">Scroll Down</span>
+      <span className="mt-2 text-sm text-[#7a7ffb]">Scroll Down</span>
       
       {/* Animation style */}
       <style>{`
