@@ -68,7 +68,9 @@ export default function JournalDashboard() {
       <div className="flex-1 min-h-screen px-6 sm:px-10 md:px-20 lg:px-40 py-16">
         <div className="flex flex-col items-start space-y-6">
           {/* Header */}
-          <h1 className="text-3xl font-bold py-1">Journal</h1>
+          <h1 className="text-4xl font-bold py-1" style={{
+              fontFamily: "'Sansation', sans-serif",
+            }}>Journal</h1>
           <p className="text-lg text-white/80 mb-3">{currentMonthYear}</p>
 
           {/* List / Skeleton / Empty */}

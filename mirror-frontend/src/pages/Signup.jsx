@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ Import navigate hook
+import { useNavigate, Link } from "react-router-dom"; // ✅ Import navigate hook and Link
 import signupImage from "../assets/signup-image.png"; // replace with your image path
 
 export default function Signup() {
@@ -78,7 +78,7 @@ export default function Signup() {
       {/* Right side - form */}
       <div className="w-1/2 flex flex-col justify-start px-25 pt-25">
         <h1 className="text-4xl font-bold mb-4">Sign up</h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-gray-400 mb-8">
           Let’s get you all set up so you can access your personal account.
         </p>
 
@@ -130,17 +130,17 @@ export default function Signup() {
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            className="w-full bg-[#7a7ffb] text-white py-2 rounded hover:bg-gray-800"
           >
             Create account
           </button>
         </form>
 
-        <p className="mt-4 text-sm text-gray-600">
+        <p className="mt-4 text-sm text-gray-400">
           Already have an account?{" "}
-          <a href="/login" className="text-red-500">
+          <Link to="/login" className="text-red-500">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>

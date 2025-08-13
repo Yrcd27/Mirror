@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import loginImage from "../assets/login-image.png";
 
 export default function Login() {
@@ -44,7 +44,7 @@ export default function Login() {
       {/* Left Section - Form (moved up) */}
       <div className="w-1/2 flex flex-col justify-start px-25 pt-25">
         <h1 className="text-4xl font-bold mb-2">Login</h1>
-        <p className="text-gray-600 mb-6">Login to access your Mirror account</p>
+        <p className="text-gray-400 mb-6">Login to access your Mirror account</p>
 
         {errors.api && <p className="text-red-500 mb-3">{errors.api}</p>}
         {success && <p className="text-green-500 mb-3">{success}</p>}
@@ -93,18 +93,18 @@ export default function Login() {
           {/* Login Button */}
           <button
             type="submit"
-            className="w-full bg-black text-white py-2 rounded hover:bg-gray-800"
+            className="w-full bg-[#7a7ffb] text-white py-2 rounded hover:bg-gray-800"
           >
             Login
           </button>
         </form>
 
         {/* Sign Up Link */}
-        <p className="mt-4 text-sm text-gray-600">
+        <p className="mt-4 text-sm text-gray-400">
           Don’t have an account?{" "}
-          <a href="/signup" className="text-red-500">
+          <Link to="/signup" className="text-red-500">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import ScrollDownIndicator from "./ScrollDownIndicator";
 
 export default function HeroSection() {
   return (
@@ -19,13 +20,18 @@ export default function HeroSection() {
 
         {/* Description - keep default/nav font */}
         <p
-          className="font-sans font-normal text-lg md:text-xl text-gray-700 leading-relaxed mx-auto max-w-4xl animate-fade-up"
+          className="font-sans font-normal text-lg md:text-xl text-gray-500 leading-relaxed mx-auto max-w-4xl animate-fade-up"
           style={{ animationDelay: "120ms" }}
         >
           A calm space to write your thoughts and feelings. Reflect on your day,
           add images if you like, and keep your entries private. Your mind. Your
           words. Your space.
         </p>
+        
+        {/* Scroll indicator */}
+        <div className="relative h-16 mt-30">
+          <ScrollDownIndicator />
+        </div>
       </div>
 
       {/* Animation */}
