@@ -4,11 +4,11 @@ import ScrollDownIndicator from "./ScrollDownIndicator";
 
 export default function HeroSection() {
   return (
-    <section className="px-6 md:px-12 pt-15 pb-0 min-h-[50vh]">
+    <section className="px-6 md:px-12 pt-15 pb-0 min-h-[50vh] bg-black text-white">
       <div className="w-full text-center space-y-6 max-w-6xl mx-auto">
         {/* Heading - Sansation Bold */}
         <h1
-          className="text-4xl md:text-7xl leading-snug tracking-tight animate-fade-up"
+          className="text-4xl md:text-7xl leading-snug tracking-tight animate-fade-up text-white"
           style={{
             animationDelay: "0ms",
             fontFamily: "'Sansation', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
@@ -20,7 +20,7 @@ export default function HeroSection() {
 
         {/* Description - keep default/nav font */}
         <p
-          className="font-sans font-normal text-lg md:text-xl text-gray-500 leading-relaxed mx-auto max-w-4xl animate-fade-up"
+          className="font-sans font-normal text-lg md:text-xl text-gray-300 leading-relaxed mx-auto max-w-4xl animate-fade-up"
           style={{ animationDelay: "120ms" }}
         >
           A calm space to write your thoughts and feelings. Reflect on your day,
