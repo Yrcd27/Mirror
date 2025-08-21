@@ -8,7 +8,7 @@ export default function Navbar() {
       {/* Left section: Logo + Brand Name */}
       <div className="flex items-center space-x-2">
         {/* Logo image */}
-        <img src={logo} alt="Mirror Logo" className="w-12 h-12" />
+        <img src={logo} alt="Mirror Logo" className="w-10 h-10" />
         <span className="text-3xl font-semibold">Mirror</span>
       </div>
 

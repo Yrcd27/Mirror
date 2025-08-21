@@ -1,18 +1,28 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom"; // ✅ Import navigate hook and Link
-import signupImage from "../assets/signup-image.png"; // replace with your image path
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const container = {
+  hidden: { opacity: 0, y: 8 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: "easeOut", when: "beforeChildren", staggerChildren: 0.06 }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 10 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.28, ease: "easeOut" } }
+};
 
 export default function Signup() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: ""
+    name: "", email: "", password: "", confirmPassword: ""
   });
-
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate(); // ✅ Create navigate instance
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -23,25 +33,21 @@ export default function Signup() {
     e.preventDefault();
 
     let newErrors = {};
-
     if (!formData.name) newErrors.name = "Name is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
     if (!formData.confirmPassword) newErrors.confirmPassword = "Confirm your password";
 
-    if (formData.password && formData.password.length < 6) {
+    if (formData.password && formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
-    }
 
     const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).+$/;
     if (formData.password && !passwordPattern.test(formData.password)) {
       newErrors.password =
         "Password must include at least one uppercase letter, one lowercase letter, one number, and one special character (!@#$%^&*).";
     }
-
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -54,95 +60,98 @@ export default function Signup() {
         email: formData.email,
         password: formData.password
       });
-
-      // ✅ Optional: if backend sends a token after signup, store it
-      if (res.data.token) {
-        localStorage.setItem("token", res.data.token);
-      }
-
-      // ✅ Navigate to dashboard
+      if (res.data.token) localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
-
     } catch (err) {
       setErrors({ api: err.response?.data?.message || "Signup failed" });
     }
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left side - image */}
-      <div className="w-1/2 flex justify-center bg-gray-100">
-        <img src={signupImage} alt="Signup" className="max-w-sm rounded-lg" />
-      </div>
-
-      {/* Right side - form */}
-      <div className="w-1/2 flex flex-col justify-start px-25 pt-25">
-        <h1 className="text-4xl font-bold mb-4">Sign up</h1>
-        <p className="text-gray-400 mb-8">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-black text-white">
+      <motion.div
+        variants={container}
+        initial="hidden"
+        animate="show"
+        className="w-full max-w-md rounded-2xl p-8 border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_10px_30px_-10px_rgba(122,127,251,0.35)]"
+      >
+        <motion.h1 variants={item} className="text-4xl font-bold mb-4">
+          Sign up
+        </motion.h1>
+        <motion.p variants={item} className="text-gray-300 mb-8">
           Let’s get you all set up so you can access your personal account.
-        </p>
+        </motion.p>
 
-        {errors.api && <p className="text-red-500 mb-4">{errors.api}</p>}
+        {errors.api && (
+          <motion.p variants={item} className="text-red-400 mb-4">
+            {errors.api}
+          </motion.p>
+        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
+        <motion.form variants={item} onSubmit={handleSubmit} className="space-y-4">
+          <motion.div variants={item}>
             <input
               name="name"
               placeholder="Name"
-              className="w-full border px-4 py-2 rounded"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
-          </div>
+            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+          </motion.div>
 
-          <div>
+          <motion.div variants={item}>
             <input
               name="email"
               type="email"
               placeholder="Email"
-              className="w-full border px-4 py-2 rounded"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-          </div>
+            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+          </motion.div>
 
-          <div>
+          <motion.div variants={item}>
             <input
               type="password"
               name="password"
               placeholder="Password"
-              className="w-full border px-4 py-2 rounded"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-          </div>
+            {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+          </motion.div>
 
-          <div>
+          <motion.div variants={item}>
             <input
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full border px-4 py-2 rounded"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
-            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
-          </div>
+            {errors.confirmPassword && (
+              <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
+            )}
+          </motion.div>
 
-          <button
+          <motion.button
+            variants={item}
             type="submit"
-            className="w-full bg-[#7a7ffb] text-white py-2 rounded hover:bg-gray-800"
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.98 }}
+            className="w-full bg-[#7a7ffb] text-white py-2 rounded transition shadow-sm hover:shadow-md hover:bg-[#6d72ff]"
           >
             Create account
-          </button>
-        </form>
+          </motion.button>
+        </motion.form>
 
-        <p className="mt-4 text-sm text-gray-400">
+        <motion.p variants={item} className="mt-4 text-sm text-gray-300">
           Already have an account?{" "}
-          <Link to="/login" className="text-red-500">
+          <Link to="/login" className="text-[#7a7ffb] hover:underline">
             Login
           </Link>
-        </p>
-      </div>
+        </motion.p>
+      </motion.div>
     </div>
   );
 }

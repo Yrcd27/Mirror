@@ -85,7 +85,7 @@ export default function UserProfile() {
     <div
       className="
         ml-60
-        flex-1 min-h-screen px-6 sm:px-10 md:px-20 lg:px-30 py-15
+        flex-1 max-h-screen px-6 sm:px-10 md:px-20 lg:px-30 pt-10
         text-white
       "
       style={{
