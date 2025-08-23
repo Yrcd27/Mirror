@@ -81,7 +81,7 @@ export default function JournalDashboard() {
       <div className="hidden md:block w-60 shrink-0" />
 
       {/* Main content */}
-      <div className="flex-1 min-h-screen px-6 sm:px-10 md:px-20 lg:px-40 py-16">
+      <div className="flex-1 min-h-screen px-6 sm:px-10 md:px-20 lg:px-40 py-15">
         <div className="flex flex-col items-start space-y-6">
           {/* Header */}
           <h1 className="text-4xl font-bold py-1" style={{

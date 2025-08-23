@@ -85,7 +85,7 @@ export default function Sidebar() {
             </Link>
             <Link
               to="/new-entry"
-              className="bg-[#7a7ffb] text-white w-40 py-2 rounded-full hover:bg-gray-200 hover:text-black text-center text-m font-bold"
+              className="bg-[#7a7ffb] text-white w-40 py-2 rounded-full hover:bg-[#7a8fff] hover:text-white text-center text-m font-bold"
             >
               + New Entry
             </Link>
