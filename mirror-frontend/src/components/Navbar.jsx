@@ -1,25 +1,26 @@
 import React from "react";
-import logo from "../assets/logo192.png"; // adjust path based on where you save the image
+import logo from "../assets/logo192.png"; // adjust path as needed
 import { Link } from "react-router-dom";
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center justify-between px-20 py-10 bg-black text-white">
+    <nav className="flex items-center justify-between px-6 sm:px-12 md:px-20 py-6 bg-black text-white">
       {/* Left section: Logo + Brand Name */}
       <div className="flex items-center space-x-2">
         {/* Logo image */}
-        <img src={logo} alt="Mirror Logo" className="w-10 h-10" />
-        <span className="text-3xl font-semibold">Mirror</span>
+        <img src={logo} alt="Mirror Logo" className="w-8 h-8 sm:w-10 sm:h-10" />
+        {/* Hide brand name on small screens */}
+        <span className="hidden sm:inline text-2xl sm:text-3xl font-semibold">Mirror</span>
       </div>
 
       {/* Right section: Button */}
-      <button
-        className="border-2 border-white rounded-full px-6 py-3 text-lg text-white hover:text-[#7a7ffb] hover:border-[#7a7ffb] transition-colors duration-300"
-      >
-        <Link to="/login">Get Started</Link>
-      </button>
-
-
+      <Link to="/login">
+        <button
+          className="border-2 border-white rounded-full px-4 py-1.5 sm:px-6 sm:py-2.5 text-sm sm:text-lg text-white hover:text-[#7a7ffb] hover:border-[#7a7ffb] transition-colors duration-300"
+        >
+          Get Started
+        </button>
+      </Link>
     </nav>
   );
 }

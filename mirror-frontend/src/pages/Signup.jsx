@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -22,6 +23,8 @@ export default function Signup() {
     name: "", email: "", password: "", confirmPassword: ""
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -89,6 +92,7 @@ export default function Signup() {
         )}
 
         <motion.form variants={item} onSubmit={handleSubmit} className="space-y-4">
+          {/* Name */}
           <motion.div variants={item}>
             <input
               name="name"
@@ -99,6 +103,7 @@ export default function Signup() {
             {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
           </motion.div>
 
+          {/* Email */}
           <motion.div variants={item}>
             <input
               name="email"
@@ -110,30 +115,47 @@ export default function Signup() {
             {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
           </motion.div>
 
-          <motion.div variants={item}>
+          {/* Password */}
+          <motion.div variants={item} className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
           </motion.div>
 
-          <motion.div variants={item}>
+          {/* Confirm Password */}
+          <motion.div variants={item} className="relative">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
+            >
+              {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {errors.confirmPassword && (
               <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
             )}
           </motion.div>
 
+          {/* Submit */}
           <motion.button
             variants={item}
             type="submit"

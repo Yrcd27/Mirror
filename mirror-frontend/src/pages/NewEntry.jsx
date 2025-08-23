@@ -8,7 +8,6 @@ export default function NewEntry() {
   const [mood, setMood] = useState("");
   const [showMoodPicker, setShowMoodPicker] = useState(false);
 
-  // 10 emojis
   const moodOptions = [
     { label: "happy", emoji: "😃" },
     { label: "sad", emoji: "😢" },
@@ -31,7 +30,6 @@ export default function NewEntry() {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
-      // Keep FormData + multipart to avoid backend changes
       const formData = new FormData();
       formData.append("content", content);
       formData.append("mood", mood);
@@ -57,7 +55,7 @@ export default function NewEntry() {
 
   return (
     <div className="h-screen bg-black text-white flex justify-center">
-      <div className="relative w-full max-w-3xl px-4 pt-16 pb-36">
+      <div className="relative w-full max-w-3xl px-4 pt-16 pb-36 sm:pb-40">
         {/* Close Button */}
         <Link to="/dashboard">
           <button
@@ -70,16 +68,16 @@ export default function NewEntry() {
 
         {/* Textarea */}
         <textarea
-          className="w-full bg-black text-white outline-none text-lg resize-none overflow-y-auto"
-          style={{ height: "calc(100vh - 200px)", paddingBottom: "80px" }}
+          className="w-full bg-black text-white outline-none text-base sm:text-lg resize-none overflow-y-auto"
+          style={{ height: "calc(100vh - 210px)" }}
           placeholder="Take a moment to reflect... what's on your mind?"
           value={content}
           onChange={(e) => setContent(e.target.value)}
         />
 
-        {/* Mood Picker Popup (10 emojis) */}
+        {/* Mood Picker Popup */}
         {showMoodPicker && (
-          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 bg-white text-black px-4 py-2 rounded-xl shadow-lg flex flex-wrap gap-2 justify-center z-50">
+          <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 bg-white text-black px-3 sm:px-4 py-2 rounded-xl shadow-lg flex flex-wrap gap-2 justify-center z-50">
             {moodOptions.map((m) => (
               <button
                 type="button"
@@ -97,46 +95,46 @@ export default function NewEntry() {
           </div>
         )}
 
-        {/* Bottom Panel — date (left) • icons (center) • round save (right) */}
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl px-4 z-40">
-          <div className="bg-white text-black px-6 py-3 rounded-full shadow-xl">
+        {/* Bottom Panel — responsive */}
+        <div className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl px-3 sm:px-4 z-40">
+          <div className="bg-white text-black px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-xl">
             <div className="flex items-center">
-              {/* LEFT — date */}
-              <div className="flex items-center gap-2 pl-2 shrink-0">
-                <FiCalendar className="text-2xl" />
-                <span className="text-sm font-medium tracking-wide">
+              {/* LEFT — date (icon-only on mobile) */}
+              <div className="flex items-center gap-2 pl-1 sm:pl-2 shrink-0">
+                <FiCalendar className="text-xl sm:text-2xl" />
+                <span className="hidden sm:inline text-sm font-medium tracking-wide">
                   {today.toUpperCase()}
                 </span>
               </div>
 
-              {/* CENTER — two icons, centered & evenly spaced */}
-              <div className="flex-1 flex justify-center items-center gap-40">
+              {/* CENTER — icons */}
+              <div className="flex-1 flex justify-center items-center gap-10 sm:gap-20 md:gap-40">
                 {/* Mood */}
                 <button
-                  onClick={() => setShowMoodPicker(!showMoodPicker)}
-                  className="text-2xl hover:scale-110 transition"
+                  onClick={() => setShowMoodPicker((v) => !v)}
+                  className="text-xl sm:text-2xl hover:scale-110 transition"
                   title="Select Mood"
                 >
-                  {mood ? <span className="text-2xl">{mood}</span> : <FiSmile />}
+                  {mood ? <span className="text-xl sm:text-2xl">{mood}</span> : <FiSmile />}
                 </button>
 
                 {/* Clear */}
                 <button
                   onClick={handleReset}
-                  className="text-2xl hover:scale-110 transition"
+                  className="text-xl sm:text-2xl hover:scale-110 transition"
                   title="Clear Entry"
                 >
                   <FiTrash />
                 </button>
               </div>
 
-              {/* RIGHT — round Save */}
+              {/* RIGHT — Save (slightly larger on sm+) */}
               <button
                 onClick={handleSubmit}
-                className="ml-4 w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-900 transition shrink-0"
+                className="ml-3 sm:ml-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-900 transition shrink-0"
                 title="Save Entry"
               >
-                <FiSave className="text-xl" />
+                <FiSave className="text-lg sm:text-xl" />
               </button>
             </div>
           </div>

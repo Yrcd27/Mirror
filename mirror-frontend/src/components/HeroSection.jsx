@@ -4,7 +4,7 @@ import ScrollDownIndicator from "./ScrollDownIndicator";
 
 export default function HeroSection() {
   return (
-    <section className="px-6 md:px-12 pt-15 pb-0 min-h-[50vh] bg-black text-white">
+    <section className="px-6 md:px-12 pt-10 pb-0 min-h-[50vh] bg-black text-white">
       <div className="w-full text-center space-y-6 max-w-6xl mx-auto">
         {/* Heading - Sansation Bold */}
         <h1

@@ -62,20 +62,6 @@ export default function PromptsSection() {
               </div>
             </div>
           ))}
-          
-          {/* One extra card to balance the grid for odd number of prompts */}
-          <div 
-            className="border border-dashed border-white/20 rounded-xl p-8
-                      bg-white/5 backdrop-blur-sm flex items-center justify-center
-                      text-center md:col-span-2 group hover:border-[#7a7ffb]/30
-                      transition-all duration-300 animate-fade-up"
-            style={{ animationDelay: "800ms" }}
-          >
-            <p className="text-gray-400 group-hover:text-white transition-all duration-300">
-              <span className="block text-lg font-semibold mb-1">Create your own prompts</span>
-              <span className="text-sm">The best journal entries often come from your own questions.</span>
-            </p>
-          </div>
         </div>
       </div>
     </section>

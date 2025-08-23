@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -21,6 +22,7 @@ export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "", rememberMe: false });
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -92,16 +94,23 @@ export default function Login() {
             {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
           </motion.div>
 
-          {/* Password */}
-          <motion.div variants={item}>
+          {/* Password with toggle button */}
+          <motion.div variants={item} className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
               onChange={handleChange}
               value={formData.password}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
+            >
+              {showPassword ? <FiEyeOff /> : <FiEye />}
+            </button>
             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
           </motion.div>
 
