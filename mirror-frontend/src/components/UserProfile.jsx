@@ -3,19 +3,30 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultProfile from "../assets/default-profile.png";
 
-const PROFILE_CACHE_KEY = "mirror_profile_cache";
+const getProfileCacheKey = () => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return `mirror_profile_cache_${payload.id}`;
+  } catch {
+    return null;
+  }
+};
 
 // cache helpers
 function loadCachedProfile() {
   try {
-    return JSON.parse(localStorage.getItem(PROFILE_CACHE_KEY) || "null");
+    const key = getProfileCacheKey();
+    return key ? JSON.parse(localStorage.getItem(key) || "null") : null;
   } catch {
     return null;
   }
 }
 function saveCachedProfile(p) {
   try {
-    localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(p));
+    const key = getProfileCacheKey();
+    if (key) localStorage.setItem(key, JSON.stringify(p));
   } catch {}
 }
 
@@ -36,6 +47,7 @@ function base64ToObjectURL(base64, mime = "image/jpeg") {
 export default function UserProfile() {
   const [profile, setProfile] = useState({});
   const [profilePic, setProfilePic] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [showConfirm, setShowConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -89,6 +101,14 @@ export default function UserProfile() {
       } catch (err) {
         if (err.name !== "CanceledError" && err.name !== "AbortError") {
           console.error(err);
+          // Handle 401 errors by clearing cache and redirecting to login
+          if (err.response?.status === 401) {
+            localStorage.removeItem("token");
+            const key = getProfileCacheKey();
+            if (key) localStorage.removeItem(key);
+            navigate("/login");
+            return;
+          }
         }
       } finally {
         if (!mounted) return;
@@ -104,6 +124,10 @@ export default function UserProfile() {
       if (avatarUrlRef.current) {
         URL.revokeObjectURL(avatarUrlRef.current);
         avatarUrlRef.current = null;
+      }
+      // revoke preview URL on unmount
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
       }
     };
   }, []);
@@ -129,7 +153,7 @@ export default function UserProfile() {
       const updated = res?.data && typeof res.data === "object" ? res.data : profile;
       setProfile(updated);
       saveCachedProfile(updated);
-      setShowSuccessModal(true);
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
     } finally {
@@ -147,7 +171,8 @@ export default function UserProfile() {
         headers: { Authorization: `Bearer ${token}` },
       });
       localStorage.removeItem("token");
-      localStorage.removeItem(PROFILE_CACHE_KEY);
+      const key = getProfileCacheKey();
+      if (key) localStorage.removeItem(key);
       navigate("/");
     } catch (err) {
       console.error(err);
@@ -229,10 +254,17 @@ export default function UserProfile() {
               type="file"
               hidden
               accept="image/png,image/jpeg"
-              onChange={(e) => setProfilePic(e.target.files[0])}
+              onChange={(e) => {
+                const file = e.target.files[0];
+                setProfilePic(file);
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  setPreviewUrl(url);
+                }
+              }}
             />
             <img
-              src={currentAvatarUrl || defaultProfile}
+              src={previewUrl || currentAvatarUrl || defaultProfile}
               alt="Profile"
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border border-white/20 shadow-lg"
               loading="lazy"
@@ -242,10 +274,10 @@ export default function UserProfile() {
 
           <div className="text-left sm:text-left w-full sm:w-auto">
             <h2 className="text-xl sm:text-2xl font-semibold break-words">
-              {profile.Name || "User Name"}
+              {profile.Name || "Loading..."}
             </h2>
             <p className="text-white/70 break-words">
-              {profile.email || "user@email.com"}
+              {profile.email || "Loading..."}
             </p>
           </div>
         </div>
@@ -277,7 +309,7 @@ export default function UserProfile() {
               <select
                 value={profile.gender || ""}
                 onChange={(e) => setProfile({ ...profile, gender: e.target.value })}
-                className="w-full rounded px-3 sm:px-4 py-2
+                className="w-full rounded px-3 sm:px-4 py-2 
                            bg-white/5 border border-white/10 text-white
                            focus:outline-none focus:ring-2 focus:ring-white/30
                            transition-all duration-300 hover:border-white/20"
@@ -298,7 +330,8 @@ export default function UserProfile() {
                 className="w-full rounded px-3 sm:px-4 py-2
                            bg-white/5 border border-white/10 text-white
                            focus:outline-none focus:ring-2 focus:ring-white/30
-                           transition-all duration-300 hover:border-white/20"
+                           transition-all duration-300 hover:border-white/20
+                           [color-scheme:dark]"
               />
             </div>
 
@@ -340,23 +373,23 @@ export default function UserProfile() {
           style={{ animationDelay: "150ms" }}
         >
           <button
-            onClick={handleDelete}
-            className="bg-[#7a7ffb] hover:bg-[#676cff] text-white px-5 sm:px-6 py-2 rounded shadow
-                       transition-all duration-300 transform hover:scale-105"
-          >
-            Delete
-          </button>
-
-          <button
             onClick={handleSave}
             disabled={saving}
-            className={`px-5 sm:px-6 py-2 rounded shadow
+            className={`w-full sm:w-24 px-4 py-2 rounded shadow
                         bg-white/10 hover:bg-white/20
                         border border-white/20 text-white
                         transition-all duration-300 transform hover:scale-105
                         ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {saving ? "Saving..." : "Save"}
+          </button>
+
+          <button
+            onClick={handleDelete}
+            className="w-full sm:w-24 bg-[#7a7ffb] hover:bg-[#676cff] text-white px-4 py-2 rounded shadow
+                       transition-all duration-300 transform hover:scale-105"
+          >
+            Delete
           </button>
         </div>
       )}

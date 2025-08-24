@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -23,8 +22,6 @@ export default function Signup() {
     name: "", email: "", password: "", confirmPassword: ""
   });
   const [errors, setErrors] = useState({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -58,13 +55,12 @@ export default function Signup() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post("http://localhost:5000/api/auth/signup", {
         Name: formData.name,
         email: formData.email,
         password: formData.password
       });
-      if (res.data.token) localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err) {
       setErrors({ api: err.response?.data?.message || "Signup failed" });
     }
@@ -116,40 +112,26 @@ export default function Signup() {
           </motion.div>
 
           {/* Password */}
-          <motion.div variants={item} className="relative">
+          <motion.div variants={item}>
             <input
-              type={showPassword ? "text" : "password"}
+              type="password"
               name="password"
               placeholder="Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark]"
               onChange={handleChange}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
-            >
-              {showPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
             {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
           </motion.div>
 
           {/* Confirm Password */}
-          <motion.div variants={item} className="relative">
+          <motion.div variants={item}>
             <input
-              type={showConfirmPassword ? "text" : "password"}
+              type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark]"
               onChange={handleChange}
             />
-            <button
-              type="button"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
-            >
-              {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-            </button>
             {errors.confirmPassword && (
               <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
             )}
