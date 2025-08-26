@@ -249,28 +249,35 @@ export default function UserProfile() {
       {/* Profile Header */}
       {!loading && (
         <div className="flex flex-col sm:flex-row sm:items-center items-start sm:space-x-6 space-y-4 sm:space-y-0 mb-8 sm:mb-10 profile-fade-in">
-          <label className="cursor-pointer transition-transform duration-300 hover:scale-105">
-            <input
-              type="file"
-              hidden
-              accept="image/png,image/jpeg"
-              onChange={(e) => {
-                const file = e.target.files[0];
-                setProfilePic(file);
-                if (file) {
-                  const url = URL.createObjectURL(file);
-                  setPreviewUrl(url);
-                }
-              }}
-            />
-            <img
-              src={previewUrl || currentAvatarUrl || defaultProfile}
-              alt="Profile"
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border border-white/20 shadow-lg"
-              loading="lazy"
-              decoding="async"
-            />
-          </label>
+          <div className="relative group">
+            <label className="cursor-pointer transition-transform duration-300 hover:scale-105 block">
+              <input
+                type="file"
+                hidden
+                accept="image/png,image/jpeg"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setProfilePic(file);
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    setPreviewUrl(url);
+                  }
+                }}
+              />
+              <img
+                src={previewUrl || currentAvatarUrl || defaultProfile}
+                alt="Profile"
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border border-white/20 shadow-lg"
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="absolute bottom-0 right-0 bg-[#7a7ffb] rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg">
+                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                </svg>
+              </div>
+            </label>
+          </div>
 
           <div className="text-left sm:text-left w-full sm:w-auto">
             <h2 className="text-xl sm:text-2xl font-semibold break-words">

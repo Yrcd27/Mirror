@@ -8,7 +8,7 @@ export default function ScrollDownIndicator() {
       </div>
       <span className="mt-2 text-sm text-[#7a7ffb]">Scroll Down</span>
       
-      {/* Animation style */}
+      
       <style>{`
         @keyframes scroll {
           0% { transform: translateY(0); opacity: 1; }

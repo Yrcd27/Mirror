@@ -22,15 +22,15 @@ export default function JournalDashboard() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
-  const fetching = useRef(false); // prevent duplicate calls
-  const didFetchFirst = useRef(false); // guard StrictMode
+  const fetching = useRef(false); 
+  const didFetchFirst = useRef(false); 
   const navigate = useNavigate();
 
   const loadPage = async (p = 1, replace = false) => {
     if (fetching.current) return;
     fetching.current = true;
     try {
-      setLoading(p === 1 && replace); // only show skeleton on first full load
+      setLoading(p === 1 && replace); 
       const token = localStorage.getItem("token");
       const res = await axios.get(`http://localhost:5000/api/journals?limit=10&page=${p}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -39,7 +39,6 @@ export default function JournalDashboard() {
       setItems(replace ? newItems : [...items, ...newItems]);
       setHasMore(more);
       setPage(p + 1);
-      // Trigger fade-in animation after data loads
       setFadeIn(true);
     } catch (err) {
       console.error(err);
@@ -53,10 +52,7 @@ export default function JournalDashboard() {
     if (didFetchFirst.current) return;
     didFetchFirst.current = true;
     loadPage(1, true);
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
-  // We're intentionally not adding loadPage as a dependency to prevent reloading
-
-  // Apply fade-in effect on component mount
+  }, []);  
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeIn(true);
@@ -77,19 +73,19 @@ export default function JournalDashboard() {
           "radial-gradient(1200px 800px at 20% 0%, #2b212f 0%, #131225 60%, #0c0b18 100%)",
       }}
     >
-      {/* Sidebar spacer to match fixed sidebar width */}
+      
       <div className="hidden md:block w-60 shrink-0" />
 
-      {/* Main content */}
+      
       <div className="flex-1 min-h-screen px-6 sm:px-10 md:px-20 lg:px-40 py-15">
         <div className="flex flex-col items-start space-y-6">
-          {/* Header */}
+          
           <h1 className="text-4xl font-bold py-1" style={{
               fontFamily: "'Sansation', sans-serif",
             }}>Journal</h1>
           <p className="text-lg text-white/80 mb-3">{currentMonthYear}</p>
 
-          {/* Add fade-in animation styles */}
+         
           <style>{`
             @keyframes fadeIn {
               from { opacity: 0; transform: translateY(10px); }

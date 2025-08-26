@@ -85,7 +85,7 @@ export default function TestimonialsSection() {
                 </div>
                 <div className="ml-3">
                   <p className="font-semibold">Jamie L.</p>
-                  <p className="text-sm text-gray-400">Premium Member</p>
+                  <p className="text-sm text-gray-400">New User</p>
                 </div>
               </div>
             </div>
