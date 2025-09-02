@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState, useCallback } from "react"
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultProfile from "../assets/default-profile.png";
+import { API_BASE_URL } from "../config";
 
 const getProfileCacheKey = () => {
   const token = localStorage.getItem("token");
@@ -84,7 +85,7 @@ export default function UserProfile() {
       try {
         if (!cached) setLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/profile", {
+        const res = await axios.get(`${API_BASE_URL}/api/profile`, {
           headers: { Authorization: `Bearer ${token}` },
           signal: controller.signal,
         });
@@ -145,7 +146,7 @@ export default function UserProfile() {
       });
       if (profilePic) formData.append("profile_picture", profilePic);
 
-      const res = await axios.post("http://localhost:5000/api/profile", formData, {
+      const res = await axios.post(`${API_BASE_URL}/api/profile`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -167,7 +168,7 @@ export default function UserProfile() {
     try {
       setDeleting(true);
       const token = localStorage.getItem("token");
-      await axios.delete("http://localhost:5000/api/profile", {
+      await axios.delete(`${API_BASE_URL}/api/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       localStorage.removeItem("token");

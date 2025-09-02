@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { API_BASE_URL } from "../config";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -39,7 +40,7 @@ export default function Login() {
     if (Object.keys(newErrors).length) return setErrors(newErrors);
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email: formData.email,
         password: formData.password,
       });

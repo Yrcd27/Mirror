@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../config";
 
 function JournalSkeleton() {
   return (
@@ -32,7 +33,7 @@ export default function JournalDashboard() {
     try {
       setLoading(p === 1 && replace); 
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:5000/api/journals?limit=10&page=${p}`, {
+      const res = await axios.get(`${API_BASE_URL}/api/journals?limit=10&page=${p}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { items: newItems, hasMore: more } = res.data;

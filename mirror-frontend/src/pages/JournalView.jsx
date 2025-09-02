@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { FiSmile, FiTrash, FiSave, FiCalendar } from "react-icons/fi";
+import { API_BASE_URL } from "../config";
 
 export default function JournalView() {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export default function JournalView() {
     const fetchJournal = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(`http://localhost:5000/api/journals/${id}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/journals/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -54,7 +55,7 @@ export default function JournalView() {
       formData.append("content", content);
       formData.append("mood", mood);
 
-      await axios.put(`http://localhost:5000/api/journals/${id}`, formData, {
+      await axios.put(`${API_BASE_URL}/api/journals/${id}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -72,7 +73,7 @@ export default function JournalView() {
     try {
       setDeleting(true);
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/journals/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/journals/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate("/dashboard");

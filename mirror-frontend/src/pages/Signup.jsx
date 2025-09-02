@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { API_BASE_URL } from "../config";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -55,7 +56,7 @@ export default function Signup() {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post(`${API_BASE_URL}/api/auth/signup`, {
         Name: formData.name,
         email: formData.email,
         password: formData.password

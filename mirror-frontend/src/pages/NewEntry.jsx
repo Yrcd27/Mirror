@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { FiSmile, FiTrash, FiSave, FiCalendar } from "react-icons/fi";
+import { API_BASE_URL } from "../config";
 
 export default function NewEntry() {
   const [content, setContent] = useState("");
@@ -34,7 +35,7 @@ export default function NewEntry() {
       formData.append("content", content);
       formData.append("mood", mood);
 
-      await axios.post("http://localhost:5000/api/journals", formData, {
+      await axios.post(`${API_BASE_URL}/api/journals`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
