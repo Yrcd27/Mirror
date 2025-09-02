@@ -14,11 +14,27 @@ app.use(cors({
   origin: [
     'http://localhost:3000',
     'http://localhost:5173',
-    process.env.FRONTEND_URL
+    process.env.FRONTEND_URL,
+    /\.vercel\.app$/,  // Allow all Vercel domains
+    /\.railway\.app$/  // Allow all Railway domains
   ],
   credentials: true
 }));
 app.use(express.json());
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "Mirror Journaling API", 
+    version: "1.0.0",
+    endpoints: {
+      health: "/health",
+      auth: "/api/auth",
+      journals: "/api/journals",
+      profile: "/api/profile"
+    }
+  });
+});
 
 // Health check endpoint
 app.get("/health", (req, res) => {
