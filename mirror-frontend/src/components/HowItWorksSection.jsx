@@ -1,8 +1,10 @@
 import React from "react";
+import { useTheme } from "../context/ThemeContext";
 
 export default function HowItWorksSection() {
+  const { theme } = useTheme();
   return (
-    <section className="py-24 px-6 md:px-12 bg-black text-white">
+    <section className={`py-24 px-6 md:px-12 theme-transition ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'}`}>
       <div className="max-w-6xl mx-auto">
         {/* Section heading */}
         <div className="text-center mb-16">
@@ -39,14 +41,14 @@ export default function HowItWorksSection() {
                 className="md:w-1/2 md:pr-16 text-right animate-fade-up"
                 style={{ animationDelay: "200ms" }}
               >
-                <div className="bg-white/5 p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:bg-[#7a7ffb]/10 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]">
+                <div className={`${theme === 'dark' ? 'bg-white/5 hover:bg-[#7a7ffb]/10' : 'bg-white border border-gray-200 hover:bg-gray-50'} p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]`}>
                   <h3 className="text-xl font-bold mb-2 flex md:justify-end items-center gap-3">
                     <span className="md:order-2">Create Your Account</span>
                     <span className="md:order-1 w-8 h-8 rounded-full bg-[#7a7ffb]/20 flex items-center justify-center text-sm border border-[#7a7ffb]/30 md:hidden">
                       1
                     </span>
                   </h3>
-                  <p className="text-gray-300">
+                  <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                     Sign up to create your private journaling space. All you need
                     is an email address to get started on your reflective journey.
                   </p>
@@ -70,14 +72,14 @@ export default function HowItWorksSection() {
                 className="md:w-1/2 md:pl-16 text-left animate-fade-up"
                 style={{ animationDelay: "300ms" }}
               >
-                <div className="bg-white/5 p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:bg-[#7a7ffb]/10 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]">
+                <div className={`${theme === 'dark' ? 'bg-white/5 hover:bg-[#7a7ffb]/10' : 'bg-white border border-gray-200 hover:bg-gray-50'} p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]`}>
                   <h3 className="text-xl font-bold mb-2 flex items-center gap-3">
                     <span className="w-8 h-8 rounded-full bg-[#7a7ffb]/20 flex items-center justify-center text-sm border border-[#7a7ffb]/30 md:hidden">
                       2
                     </span>
                     <span>Set Up Your Profile</span>
                   </h3>
-                  <p className="text-gray-300">
+                  <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                     Personalize your experience by adding your information and
                     preferences. This is your space—make it feel like home.
                   </p>
@@ -99,14 +101,14 @@ export default function HowItWorksSection() {
                 className="md:w-1/2 md:pr-16 text-right animate-fade-up"
                 style={{ animationDelay: "400ms" }}
               >
-                <div className="bg-white/5 p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:bg-[#7a7ffb]/10 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]">
+                <div className={`${theme === 'dark' ? 'bg-white/5 hover:bg-[#7a7ffb]/10' : 'bg-white border border-gray-200 hover:bg-gray-50'} p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]`}>
                   <h3 className="text-xl font-bold mb-2 flex md:justify-end items-center gap-3">
                     <span className="md:order-2">Start Journaling</span>
                     <span className="md:order-1 w-8 h-8 rounded-full bg-[#7a7ffb]/20 flex items-center justify-center text-sm border border-[#7a7ffb]/30 md:hidden">
                       3
                     </span>
                   </h3>
-                  <p className="text-gray-300">
+                  <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                     Click '+ New Entry' to begin writing. Our distraction-free
                     editor lets you focus exclusively on your thoughts.
                   </p>
@@ -130,14 +132,14 @@ export default function HowItWorksSection() {
                 className="md:w-1/2 md:pl-16 text-left animate-fade-up"
                 style={{ animationDelay: "500ms" }}
               >
-                <div className="bg-white/5 p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:bg-[#7a7ffb]/10 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]">
+                <div className={`${theme === 'dark' ? 'bg-white/5 hover:bg-[#7a7ffb]/10' : 'bg-white border border-gray-200 hover:bg-gray-50'} p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]`}>
                   <h3 className="text-xl font-bold mb-2 flex items-center gap-3">
                     <span className="w-8 h-8 rounded-full bg-[#7a7ffb]/20 flex items-center justify-center text-sm border border-[#7a7ffb]/30 md:hidden">
                       4
                     </span>
                     <span>Express Your Mood</span>
                   </h3>
-                  <p className="text-gray-300">
+                  <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                     Select from 10 different mood emojis to capture how you're
                     feeling alongside your written reflections.
                   </p>
@@ -159,14 +161,14 @@ export default function HowItWorksSection() {
                 className="md:w-1/2 md:pr-16 text-right animate-fade-up"
                 style={{ animationDelay: "600ms" }}
               >
-                <div className="bg-white/5 p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:bg-[#7a7ffb]/10 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]">
+                <div className={`${theme === 'dark' ? 'bg-white/5 hover:bg-[#7a7ffb]/10' : 'bg-white border border-gray-200 hover:bg-gray-50'} p-8 rounded-xl inline-block mb-4 md:mb-0 w-full md:w-auto shadow-lg transition-all duration-300 hover:shadow-[#7a7ffb]/40 hover:scale-[1.02]`}>
                   <h3 className="text-xl font-bold mb-2 flex md:justify-end items-center gap-3">
                     <span className="md:order-2">Review Your Journey</span>
                     <span className="md:order-1 w-8 h-8 rounded-full bg-[#7a7ffb]/20 flex items-center justify-center text-sm border border-[#7a7ffb]/30 md:hidden">
                       5
                     </span>
                   </h3>
-                  <p className="text-gray-300">
+                  <p className={theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}>
                     Visit your dashboard to see all your entries organized by
                     date. Watch your collection of reflections grow over time.
                   </p>

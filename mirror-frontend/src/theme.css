@@ -1,0 +1,34 @@
+/* Theme styles for light and dark mode */
+
+/* Common transitions for smooth theme changes */
+.theme-transition {
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+/* Light mode overrides */
+:root:not(.dark) {
+  --background-color: white;
+  --text-color: #333333;
+  --secondary-text: #555555;
+  --accent-color: #7a7ffb;
+  --border-color: #e5e5e5;
+  --card-bg: #f8f8f8;
+  --hover-bg: #efefef;
+}
+
+/* Dark mode overrides (keeping original styling) */
+.dark {
+  --background-color: black;
+  --text-color: white;
+  --secondary-text: #bbbbbb;
+  --accent-color: #7a7ffb;
+  --border-color: #333333;
+  --card-bg: #111111;
+  --hover-bg: #222222;
+}
+
+/* Apply theme variables to elements */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

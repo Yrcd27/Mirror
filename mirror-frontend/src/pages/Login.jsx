@@ -4,6 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { API_BASE_URL } from "../config";
+import { useTheme } from "../context/ThemeContext";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -25,6 +26,7 @@ export default function Login() {
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -56,27 +58,35 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-black text-white">
+    <div className={`min-h-screen flex items-center justify-center px-4 ${
+      theme === 'dark' 
+        ? 'bg-black text-white' 
+        : 'bg-gray-50 text-gray-900'
+    }`}>
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="w-full max-w-md rounded-2xl p-8 border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_10px_30px_-10px_rgba(122,127,251,0.35)]"
+        className={`w-full max-w-md rounded-2xl p-8 ${
+          theme === 'dark'
+            ? 'border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_10px_30px_-10px_rgba(122,127,251,0.35)]'
+            : 'border border-gray-200 bg-white shadow-lg'
+        }`}
       >
         <motion.h1 variants={item} className="text-4xl font-bold mb-4 text-center">
           Login
         </motion.h1>
-        <motion.p variants={item} className="text-gray-300 mb-8 text-center">
+        <motion.p variants={item} className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mb-8 text-center`}>
           Login to access your Mirror account.
         </motion.p>
 
         {errors.api && (
-          <motion.p variants={item} className="text-red-400 mb-4 text-center">
+          <motion.p variants={item} className="text-red-500 mb-4 text-center">
             {errors.api}
           </motion.p>
         )}
         {success && (
-          <motion.p variants={item} className="text-green-400 mb-4 text-center">
+          <motion.p variants={item} className="text-green-500 mb-4 text-center">
             {success}
           </motion.p>
         )}
@@ -88,11 +98,15 @@ export default function Login() {
               type="email"
               name="email"
               placeholder="Email"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className={`w-full rounded px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
               value={formData.email}
             />
-            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </motion.div>
 
           {/* Password with toggle button */}
@@ -101,18 +115,24 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className={`w-full rounded px-4 py-2 pr-10 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
               value={formData.password}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-300 hover:text-[#7a7ffb]"
+              className={`absolute inset-y-0 right-3 flex items-center hover:text-[#7a7ffb] ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              }`}
             >
               {showPassword ? <FiEyeOff /> : <FiEye />}
             </button>
-            {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </motion.div>
 
           {/* Remember me */}
@@ -124,7 +144,7 @@ export default function Login() {
               onChange={handleChange}
               className="mr-2 accent-[#7a7ffb]"
             />
-            <label className="text-sm text-gray-200">Remember me</label>
+            <label className={`text-sm ${theme === 'dark' ? 'text-gray-200' : 'text-gray-700'}`}>Remember me</label>
           </motion.div>
 
           {/* Button */}

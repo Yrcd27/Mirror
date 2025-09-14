@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { HiOutlineLogout, HiMenuAlt3, HiX } from "react-icons/hi";
 import logo from "../assets/logo192.png";
+import flipLogo from "../assets/flip.png";
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
+import { FiMoon, FiSun } from "react-icons/fi";
 
 export default function Sidebar() {
+  const { theme, toggleTheme } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -60,18 +64,23 @@ export default function Sidebar() {
   return (
     <>
       <div
-        className={`bg-black text-white flex flex-col justify-between h-screen fixed top-0 left-0 py-6 transition-all duration-300 z-10
+        className={`flex flex-col justify-between h-screen fixed top-0 left-0 py-6 transition-all duration-300 z-10
         overflow-hidden
         ${isOpen ? "translate-x-0" : "-translate-x-full"}  /* mobile: slide off */
         md:translate-x-0  /* desktop never slides */
         w-60              /* mobile width stays 60 */
-        md:${isOpen ? "w-60" : "w-16"}  /* desktop width behavior unchanged */`}
+        md:${isOpen ? "w-60" : "w-16"}  /* desktop width behavior unchanged */
+        ${theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black border-r border-gray-200'}`}
       >
         {/* Top Section */}
         <div>
           {/* Logo */}
           <div className="flex items-center justify-center py-10">
-            <img src={logo} alt="Mirror Logo" className="w-10 h-10 mr-2" />
+            <img 
+              src={theme === 'dark' ? logo : flipLogo} 
+              alt="Mirror Logo" 
+              className="w-10 h-10 mr-2" 
+            />
             {isOpen && <span className="text-3xl font-bold">Mirror</span>}
           </div>
 
@@ -93,10 +102,31 @@ export default function Sidebar() {
         </div>
 
         {/* Bottom Section */}
-        <div className="py-6 text-center">
+        <div className="py-6 flex flex-col items-center space-y-4">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className={`flex items-center justify-center w-full hover:text-[#7a7ffb] ${isOpen ? 'px-4' : ''}`}
+            aria-label="Toggle dark/light theme"
+            title={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
+          >
+            {theme === 'dark' ? (
+              <>
+                <FiSun size={20} />
+                {isOpen && <span className="ml-2">Light Mode</span>}
+              </>
+            ) : (
+              <>
+                <FiMoon size={20} />
+                {isOpen && <span className="ml-2">Dark Mode</span>}
+              </>
+            )}
+          </button>
+          
+          {/* Logout Button */}
           <button
             onClick={() => setShowConfirm(true)}
-            className="flex items-center justify-center w-full hover:text-[#7a7ffb]"
+            className={`flex items-center justify-center w-full hover:text-[#7a7ffb] ${isOpen ? 'px-4' : ''}`}
           >
             <HiOutlineLogout size={20} />
             {isOpen && <span className="ml-2">Logout</span>}
@@ -106,7 +136,9 @@ export default function Sidebar() {
 
       {/* Toggle Button (mobile only) — positioned so it stays reachable when hidden */}
       <button
-        className={`md:hidden fixed top-4 ${isOpen ? "left-[17rem]" : "left-4"} bg-black text-white p-2 rounded z-20`}
+        className={`md:hidden fixed top-4 ${isOpen ? "left-[17rem]" : "left-4"} p-2 rounded z-20 ${
+          theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black border border-gray-200'
+        }`}
         onClick={() => setIsOpen((v) => !v)}
         aria-label={isOpen ? "Close menu" : "Open menu"}
         title={isOpen ? "Close menu" : "Open menu"}
@@ -123,16 +155,24 @@ export default function Sidebar() {
             onClick={() => setShowConfirm(false)}
           />
           {/* Dialog */}
-          <div className="relative z-10 w-11/12 max-w-md rounded-2xl bg-[#1c1b2a] text-white border border-white/10 shadow-xl p-6">
+          <div className={`relative z-10 w-11/12 max-w-md rounded-2xl shadow-xl p-6 ${
+            theme === 'dark' 
+              ? 'bg-[#1c1b2a] text-white border border-white/10' 
+              : 'bg-white text-black border border-gray-200'
+          }`}>
             <h3 className="text-lg font-semibold">Logout?</h3>
-            <p className="mt-2 text-white/80">
+            <p className={`mt-2 ${theme === 'dark' ? 'text-white/80' : 'text-gray-600'}`}>
               Are you sure you want to log out of your account?
             </p>
 
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setShowConfirm(false)}
-                className="px-4 py-2 rounded border border-white/20 bg-white/10 hover:bg-white/20"
+                className={`px-4 py-2 rounded ${
+                  theme === 'dark'
+                    ? 'border border-white/20 bg-white/10 hover:bg-white/20'
+                    : 'border border-gray-300 bg-gray-100 hover:bg-gray-200'
+                }`}
               >
                 Cancel
               </button>
