@@ -1,20 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTheme } from "../context/ThemeContext";
 
 export default function CtaSection() {
+  const { theme } = useTheme();
+  
   return (
-    <section className="py-24 px-6 md:px-12 bg-[#0c0b18] text-white relative overflow-hidden">
+    <section className={`py-24 px-6 md:px-12 relative overflow-hidden theme-transition ${
+      theme === 'dark' ? 'bg-[#0c0b18] text-white' : 'bg-gray-50 text-black'
+    }`}>
       {/* Background gradient */}
-      <div className="absolute top-0 left-0 right-0 h-40 
-                    bg-gradient-to-b from-black to-transparent z-0"></div>
+      <div className={`absolute top-0 left-0 right-0 h-40 z-0 ${
+        theme === 'dark' 
+          ? 'bg-gradient-to-b from-black to-transparent' 
+          : 'bg-gradient-to-b from-white to-transparent'
+      }`}></div>
       
       {/* Background purple glow */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
                     w-[600px] h-[600px] bg-[#7a7ffb]/10 rounded-full blur-[120px] z-0"></div>
       
       <div className="max-w-5xl mx-auto relative z-10">
-        <div className="bg-gradient-to-br from-[#131225] to-[#2b212f] rounded-3xl p-8 md:p-16 
-                      border border-white/10 shadow-xl animate-fade-up"
+        <div className={`rounded-3xl p-8 md:p-16 shadow-xl animate-fade-up ${
+          theme === 'dark'
+            ? 'bg-gradient-to-br from-[#131225] to-[#2b212f] border border-white/10' 
+            : 'bg-white border border-gray-200'
+        }`}
              style={{ animationDelay: "100ms" }}>
           <div className="text-center space-y-8">
             {/* Heading */}
@@ -30,7 +41,9 @@ export default function CtaSection() {
             
             {/* Description */}
             <p 
-              className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto animate-fade-up"
+              className={`text-lg md:text-xl max-w-2xl mx-auto animate-fade-up ${
+                theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
+              }`}
               style={{ animationDelay: "300ms" }}
             >
               Your personal growth story is waiting to unfold. Start journaling with Mirror and 
@@ -50,7 +63,9 @@ export default function CtaSection() {
             
             {/* Subtle note */}
             <p 
-              className="text-sm text-gray-400 animate-fade-up"
+              className={`text-sm animate-fade-up ${
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-500'
+              }`}
               style={{ animationDelay: "500ms" }}
             >
               Free to use. No credit card required.

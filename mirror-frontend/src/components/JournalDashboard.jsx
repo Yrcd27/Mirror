@@ -2,14 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
+import { useTheme } from "../context/ThemeContext";
 
-function JournalSkeleton() {
+function JournalSkeleton({ theme }) {
   return (
     <div className="space-y-4">
       {[...Array(3)].map((_, i) => (
         <div 
           key={i} 
-          className="h-28 max-w-[950px] w-full rounded-2xl bg-white/10 animate-pulse"
+          className={`h-28 max-w-[950px] w-full rounded-2xl animate-pulse ${
+            theme === 'dark' ? 'bg-white/10' : 'bg-gray-200'
+          }`}
           style={{ animationDelay: `${i * 150}ms` }}
         />
       ))}
@@ -26,6 +29,7 @@ export default function JournalDashboard() {
   const fetching = useRef(false); 
   const didFetchFirst = useRef(false); 
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const loadPage = async (p = 1, replace = false) => {
     if (fetching.current) return;
@@ -68,10 +72,11 @@ export default function JournalDashboard() {
 
   return (
     <div
-      className="min-h-screen flex text-white"
+      className={`min-h-screen flex ${theme === 'dark' ? 'text-white' : 'text-black'}`}
       style={{
-        background:
-          "radial-gradient(1200px 800px at 20% 0%, #2b212f 0%, #131225 60%, #0c0b18 100%)",
+        background: theme === 'dark'
+          ? "radial-gradient(1200px 800px at 20% 0%, #2b212f 0%, #131225 60%, #0c0b18 100%)"
+          : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
       }}
     >
       
@@ -84,7 +89,7 @@ export default function JournalDashboard() {
           <h1 className="text-4xl font-bold py-1" style={{
               fontFamily: "'Sansation', sans-serif",
             }}>Journal</h1>
-          <p className="text-lg text-white/80 mb-3">{currentMonthYear}</p>
+          <p className={`text-lg mb-3 ${theme === 'dark' ? 'text-white/80' : 'text-gray-600'}`}>{currentMonthYear}</p>
 
          
           <style>{`
@@ -110,9 +115,9 @@ export default function JournalDashboard() {
 
           {/* List / Skeleton / Empty */}
           {loading ? (
-            <JournalSkeleton />
+            <JournalSkeleton theme={theme} />
           ) : items.length === 0 ? (
-            <div className="text-white/70 fade-in">
+            <div className={`fade-in ${theme === 'dark' ? 'text-white/70' : 'text-gray-500'}`}>
               No entries yet. Click <span className="font-semibold">+ New Entry</span> to start.
             </div>
           ) : (
@@ -125,13 +130,17 @@ export default function JournalDashboard() {
                   <div
                     key={j._id}
                     onClick={() => navigate(`/journal/${j._id}`)}
-                    className="bg-black/90 text-white px-6 py-4 rounded-2xl cursor-pointer
-                               hover:bg-[#2b212f] transition duration-200 shadow-md
-                               flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden"
+                    className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
+                      theme === 'dark'
+                        ? 'bg-black/90 text-white hover:bg-[#2b212f]'
+                        : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
+                    }`}
                   >
                     {/* Date */}
-                    <div className="flex flex-col items-center justify-center w-16 h-16 bg-gray-900 rounded-xl font-bold shrink-0">
-                      <div className="text-xs text-gray-400 uppercase">{weekday}</div>
+                    <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
+                      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
+                    }`}>
+                      <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
                       <div className="text-2xl">{day}</div>
                     </div>
                     {/* Excerpt */}
@@ -147,7 +156,11 @@ export default function JournalDashboard() {
               {hasMore && (
                 <button
                   onClick={() => loadPage(page)}
-                  className="mt-4 px-4 py-2 rounded bg-white/10 hover:bg-white/20"
+                  className={`mt-4 px-4 py-2 rounded transition ${
+                    theme === 'dark'
+                      ? 'bg-white/10 hover:bg-white/20 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300 text-black'
+                  }`}
                 >
                   Load more
                 </button>

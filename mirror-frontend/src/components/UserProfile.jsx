@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import defaultProfile from "../assets/default-profile.png";
 import { API_BASE_URL } from "../config";
+import { useTheme } from "../context/ThemeContext";
 
 const getProfileCacheKey = () => {
   const token = localStorage.getItem("token");
@@ -56,6 +57,7 @@ export default function UserProfile() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [saving, setSaving] = useState(false);
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   // memoized/revocable avatar URL from base64
   const avatarUrlRef = useRef(null);
@@ -185,16 +187,17 @@ export default function UserProfile() {
 
   return (
     <div
-      className="
+      className={`
         md:ml-60 ml-0
         flex-1 max-h-screen
         px-4 sm:px-6 md:px-10 lg:px-24 xl:px-32
         pt-8 sm:pt-10
-        text-white
-      "
+        ${theme === 'dark' ? 'text-white' : 'text-black'}
+      `}
       style={{
-        background:
-          "radial-gradient(1200px 800px at 20% 0%, #2b212f 0%, #131225 60%, #0c0b18 100%)",
+        background: theme === 'dark'
+          ? "radial-gradient(1200px 800px at 20% 0%, #2b212f 0%, #131225 60%, #0c0b18 100%)"
+          : "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
       }}
     >
       <style>{`
@@ -268,7 +271,9 @@ export default function UserProfile() {
               <img
                 src={previewUrl || currentAvatarUrl || defaultProfile}
                 alt="Profile"
-                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border border-white/20 shadow-lg"
+                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover shadow-lg ${
+                  theme === 'dark' ? 'border border-white/20' : 'border border-gray-300'
+                }`}
                 loading="lazy"
                 decoding="async"
               />
@@ -284,7 +289,7 @@ export default function UserProfile() {
             <h2 className="text-xl sm:text-2xl font-semibold break-words">
               {profile.Name || "Loading..."}
             </h2>
-            <p className="text-white/70 break-words">
+            <p className={`break-words ${theme === 'dark' ? 'text-white/70' : 'text-gray-600'}`}>
               {profile.email || "Loading..."}
             </p>
           </div>
@@ -299,28 +304,29 @@ export default function UserProfile() {
             style={{ animationDelay: "50ms" }}
           >
             <div>
-              <label className="block text-white/80 mb-1">Full Name</label>
+              <label className={`block mb-1 ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Full Name</label>
               <input
                 placeholder="Full Name"
                 value={profile.full_name || ""}
                 onChange={(e) => setProfile({ ...profile, full_name: e.target.value })}
-                className="w-full rounded px-3 sm:px-4 py-2
-                           bg-white/5 border border-white/10 text-white
-                           placeholder-white/60
-                           focus:outline-none focus:ring-2 focus:ring-white/30
-                           transition-all duration-300 hover:border-white/20"
+                className={`w-full rounded px-3 sm:px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 border border-white/10 text-white placeholder-white/60 focus:ring-white/30 hover:border-white/20'
+                    : 'bg-white border border-gray-300 text-black placeholder-gray-500 focus:ring-blue-500 hover:border-gray-400'
+                }`}
               />
             </div>
 
             <div>
-              <label className="block text-white/80 mb-1">Gender</label>
+              <label className={`block mb-1 ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Gender</label>
               <select
                 value={profile.gender || ""}
                 onChange={(e) => setProfile({ ...profile, gender: e.target.value })}
-                className="w-full rounded px-3 sm:px-4 py-2 
-                           bg-white/5 border border-white/10 text-white
-                           focus:outline-none focus:ring-2 focus:ring-white/30
-                           transition-all duration-300 hover:border-white/20"
+                className={`w-full rounded px-3 sm:px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 border border-white/10 text-white focus:ring-white/30 hover:border-white/20'
+                    : 'bg-white border border-gray-300 text-black focus:ring-blue-500 hover:border-gray-400'
+                }`}
               >
                 <option value="">Select Gender</option>
                 <option className="text-black" value="Male">Male</option>
@@ -330,45 +336,45 @@ export default function UserProfile() {
             </div>
 
             <div>
-              <label className="block text-white/80 mb-1">Date of Birth</label>
+              <label className={`block mb-1 ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Date of Birth</label>
               <input
                 type="date"
                 value={profile.date_of_birth?.slice(0, 10) || ""}
                 onChange={(e) => setProfile({ ...profile, date_of_birth: e.target.value })}
-                className="w-full rounded px-3 sm:px-4 py-2
-                           bg-white/5 border border-white/10 text-white
-                           focus:outline-none focus:ring-2 focus:ring-white/30
-                           transition-all duration-300 hover:border-white/20
-                           [color-scheme:dark]"
+                className={`w-full rounded px-3 sm:px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 [color-scheme:dark] ${
+                  theme === 'dark'
+                    ? 'bg-white/5 border border-white/10 text-white focus:ring-white/30 hover:border-white/20'
+                    : 'bg-white border border-gray-300 text-black focus:ring-blue-500 hover:border-gray-400'
+                }`}
               />
             </div>
 
             <div>
-              <label className="block text-white/80 mb-1">Phone Number</label>
+              <label className={`block mb-1 ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Phone Number</label>
               <input
                 placeholder="Phone Number"
                 value={profile.phone_number || ""}
                 onChange={(e) => setProfile({ ...profile, phone_number: e.target.value })}
-                className="w-full rounded px-3 sm:px-4 py-2
-                           bg-white/5 border border-white/10 text-white
-                           placeholder-white/60
-                           focus:outline-none focus:ring-2 focus:ring-white/30
-                           transition-all duration-300 hover:border-white/20"
+                className={`w-full rounded px-3 sm:px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 ${
+                  theme === 'dark'
+                    ? 'bg-white/5 border border-white/10 text-white placeholder-white/60 focus:ring-white/30 hover:border-white/20'
+                    : 'bg-white border border-gray-300 text-black placeholder-gray-500 focus:ring-blue-500 hover:border-gray-400'
+                }`}
               />
             </div>
           </div>
 
           <div className="mt-5 sm:mt-6 profile-fade-in" style={{ animationDelay: "100ms" }}>
-            <label className="block text-white/80 mb-1">Bio</label>
+            <label className={`block mb-1 ${theme === 'dark' ? 'text-white/80' : 'text-gray-700'}`}>Bio</label>
             <textarea
               placeholder="Bio"
               value={profile.bio || ""}
               onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-              className="w-full h-28 sm:h-32 resize-none rounded px-3 sm:px-4 py-2
-                         bg-white/5 border border-white/10 text-white
-                         placeholder-white/60
-                         focus:outline-none focus:ring-2 focus:ring-white/30
-                         transition-all duration-300 hover:border-white/20"
+              className={`w-full h-28 sm:h-32 resize-none rounded px-3 sm:px-4 py-2 transition-all duration-300 focus:outline-none focus:ring-2 ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-white/60 focus:ring-white/30 hover:border-white/20'
+                  : 'bg-white border border-gray-300 text-black placeholder-gray-500 focus:ring-blue-500 hover:border-gray-400'
+              }`}
             />
           </div>
         </>
@@ -383,11 +389,11 @@ export default function UserProfile() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className={`w-full sm:w-24 px-4 py-2 rounded shadow
-                        bg-white/10 hover:bg-white/20
-                        border border-white/20 text-white
-                        transition-all duration-300 transform hover:scale-105
-                        ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
+            className={`w-full sm:w-24 px-4 py-2 rounded shadow transition-all duration-300 transform hover:scale-105 ${
+              theme === 'dark'
+                ? 'bg-white/10 hover:bg-white/20 border border-white/20 text-white'
+                : 'bg-blue-500 hover:bg-blue-600 border border-blue-500 text-white'
+            } ${saving ? "opacity-70 cursor-not-allowed" : ""}`}
           >
             {saving ? "Saving..." : "Save"}
           </button>

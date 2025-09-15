@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { API_BASE_URL } from "../config";
+import { useTheme } from "../context/ThemeContext";
 
 const container = {
   hidden: { opacity: 0, y: 8 },
@@ -24,6 +25,7 @@ export default function Signup() {
   });
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const { theme } = useTheme();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -68,22 +70,30 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-black text-white">
+    <div className={`min-h-screen flex items-center justify-center px-4 ${
+      theme === 'dark' 
+        ? 'bg-black text-white' 
+        : 'bg-gray-50 text-gray-900'
+    }`}>
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="w-full max-w-md rounded-2xl p-8 border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_10px_30px_-10px_rgba(122,127,251,0.35)]"
+        className={`w-full max-w-md rounded-2xl p-8 ${
+          theme === 'dark'
+            ? 'border border-white/10 bg-white/5 backdrop-blur-sm shadow-[0_10px_30px_-10px_rgba(122,127,251,0.35)]'
+            : 'border border-gray-200 bg-white shadow-lg'
+        }`}
       >
         <motion.h1 variants={item} className="text-4xl font-bold mb-4">
           Sign up
         </motion.h1>
-        <motion.p variants={item} className="text-gray-300 mb-8">
+        <motion.p variants={item} className={`${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'} mb-8`}>
           Let’s get you all set up so you can access your personal account.
         </motion.p>
 
         {errors.api && (
-          <motion.p variants={item} className="text-red-400 mb-4">
+          <motion.p variants={item} className="text-red-500 mb-4">
             {errors.api}
           </motion.p>
         )}
@@ -94,10 +104,14 @@ export default function Signup() {
             <input
               name="name"
               placeholder="Name"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className={`w-full rounded px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
             />
-            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
           </motion.div>
 
           {/* Email */}
@@ -106,10 +120,14 @@ export default function Signup() {
               name="email"
               type="email"
               placeholder="Email"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb]"
+              className={`w-full rounded px-4 py-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
             />
-            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
           </motion.div>
 
           {/* Password */}
@@ -118,10 +136,14 @@ export default function Signup() {
               type="password"
               name="password"
               placeholder="Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark]"
+              className={`w-full rounded px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
             />
-            {errors.password && <p className="text-red-400 text-sm">{errors.password}</p>}
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
           </motion.div>
 
           {/* Confirm Password */}
@@ -130,11 +152,15 @@ export default function Signup() {
               type="password"
               name="confirmPassword"
               placeholder="Confirm Password"
-              className="w-full rounded bg-white/5 border border-white/10 text-white placeholder-gray-400 px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark]"
+              className={`w-full rounded px-4 py-2 pr-2 transition focus:outline-none focus:ring-2 focus:ring-[#7a7ffb]/60 focus:border-[#7a7ffb] [color-scheme:dark] ${
+                theme === 'dark'
+                  ? 'bg-white/5 border border-white/10 text-white placeholder-gray-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 placeholder-gray-500'
+              }`}
               onChange={handleChange}
             />
             {errors.confirmPassword && (
-              <p className="text-red-400 text-sm">{errors.confirmPassword}</p>
+              <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
             )}
           </motion.div>
 
@@ -150,7 +176,7 @@ export default function Signup() {
           </motion.button>
         </motion.form>
 
-        <motion.p variants={item} className="mt-4 text-sm text-gray-300">
+        <motion.p variants={item} className={`mt-4 text-sm ${theme === 'dark' ? 'text-gray-300' : 'text-gray-600'}`}>
           Already have an account?{" "}
           <Link to="/login" className="text-[#7a7ffb] hover:underline">
             Login

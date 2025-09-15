@@ -3,11 +3,13 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { FiSmile, FiTrash, FiSave, FiCalendar } from "react-icons/fi";
 import { API_BASE_URL } from "../config";
+import { useTheme } from "../context/ThemeContext";
 
 export default function NewEntry() {
   const [content, setContent] = useState("");
   const [mood, setMood] = useState("");
   const [showMoodPicker, setShowMoodPicker] = useState(false);
+  const { theme } = useTheme();
 
   const moodOptions = [
     { label: "happy", emoji: "😃" },
@@ -55,12 +57,18 @@ export default function NewEntry() {
   };
 
   return (
-    <div className="h-screen bg-black text-white flex justify-center">
+    <div className={`h-screen flex justify-center ${
+      theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-black'
+    }`}>
       <div className="relative w-full max-w-3xl px-4 pt-16 pb-36 sm:pb-40">
         {/* Close Button */}
         <Link to="/dashboard">
           <button
-            className="absolute top-4 right-4 bg-gray-800 text-white rounded-full w-12 h-12 flex items-center justify-center hover:bg-gray-700 text-3xl"
+            className={`absolute top-4 right-4 rounded-full w-12 h-12 flex items-center justify-center text-3xl transition ${
+              theme === 'dark'
+                ? 'bg-gray-800 text-white hover:bg-gray-700'
+                : 'bg-white text-black hover:bg-gray-100 border border-gray-300'
+            }`}
             title="Close"
           >
             &times;
@@ -69,7 +77,9 @@ export default function NewEntry() {
 
         {/* Textarea */}
         <textarea
-          className="w-full bg-black text-white outline-none text-base sm:text-lg resize-none overflow-y-auto"
+          className={`w-full outline-none text-base sm:text-lg resize-none overflow-y-auto ${
+            theme === 'dark' ? 'bg-black text-white' : 'bg-gray-50 text-black'
+          }`}
           style={{ height: "calc(100vh - 210px)" }}
           placeholder="Take a moment to reflect... what's on your mind?"
           value={content}
@@ -78,7 +88,9 @@ export default function NewEntry() {
 
         {/* Mood Picker Popup */}
         {showMoodPicker && (
-          <div className="absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 bg-white text-black px-3 sm:px-4 py-2 rounded-xl shadow-lg flex flex-wrap gap-2 justify-center z-50">
+          <div className={`absolute bottom-24 sm:bottom-28 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-2 rounded-xl shadow-lg flex flex-wrap gap-2 justify-center z-50 ${
+            theme === 'dark' ? 'bg-white text-black' : 'bg-gray-800 text-white'
+          }`}>
             {moodOptions.map((m) => (
               <button
                 type="button"
@@ -98,7 +110,9 @@ export default function NewEntry() {
 
         {/* Bottom Panel — responsive */}
         <div className="fixed bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-full max-w-3xl px-3 sm:px-4 z-40">
-          <div className="bg-white text-black px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-xl">
+          <div className={`px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl shadow-xl ${
+            theme === 'dark' ? 'bg-white text-black' : 'bg-gray-800 text-white'
+          }`}>
             <div className="flex items-center">
               {/* LEFT — date (icon-only on mobile) */}
               <div className="flex items-center gap-2 pl-1 sm:pl-2 shrink-0">
@@ -132,7 +146,11 @@ export default function NewEntry() {
               {/* RIGHT — Save (slightly larger on sm+) */}
               <button
                 onClick={handleSubmit}
-                className="ml-3 sm:ml-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black text-white flex items-center justify-center hover:bg-gray-900 transition shrink-0"
+                className={`ml-3 sm:ml-4 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center transition shrink-0 ${
+                  theme === 'dark'
+                    ? 'bg-black text-white hover:bg-gray-900'
+                    : 'bg-white text-black hover:bg-gray-100 border border-gray-300'
+                }`}
                 title="Save Entry"
               >
                 <FiSave className="text-lg sm:text-xl" />
