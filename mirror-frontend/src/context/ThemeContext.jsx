@@ -22,11 +22,11 @@ export const ThemeProvider = ({ children }) => {
       document.documentElement.classList.remove("dark");
     }
 
-    // Swap favicon based on theme
+    // Keep favicon as dark mode logo always
     try {
       const link = document.querySelector("link[rel='icon']");
       if (link) {
-        link.href = theme === "dark" ? logo : flipLogo;
+        link.href = logo;
       }
     } catch {}
   }, [theme]);
