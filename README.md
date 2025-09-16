@@ -1,6 +1,8 @@
-<div align="center">
-  <img src="./mirror-frontend/public/logo192.png" alt="Mirror Logo" width="100" />
-  <h1>Mirror</h1>
+<div align="left">
+  <div style="display: flex; align-items: center; justify-content: center;">
+    <img src="./mirror-frontend/public/logo192.png" alt="Mirror Logo" width="50" />
+    <h1 style="margin-left: 10px;">Mirror</h1>
+  </div>
 </div>
 
 # Mirror - A Reflective Journaling Platform
@@ -8,8 +10,6 @@
 ## 📝 About The Project
 
 Mirror is a modern web application designed to provide users with a dedicated space for reflective journaling and personal growth. In our fast-paced world, taking time for self-reflection is crucial for mental well-being and personal development. Mirror offers thoughtful prompts, mood tracking, and a beautiful interface to make journaling a meaningful daily practice.
-
-**[Live Demo](https://mirror-journaling-website.vercel.app/)**
 
 ## 🛠️ Tech Stack
 
@@ -128,6 +128,10 @@ Developed with care by [Yasiru Pandigama](https://github.com/Yrcd27)
 ## 📄 License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🔗 Live Demo
+
+**[Experience Mirror Now](https://mirror-journaling-website.vercel.app/)**
 
 ---
 
