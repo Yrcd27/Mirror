@@ -1,10 +1,3 @@
-<div align="left">
-  <div style="display: flex; align-items: center; justify-content: center;">
-    <img src="./mirror-frontend/public/logo192.png" alt="Mirror Logo" width="50" />
-    <h1 style="margin-left: 10px;">Mirror</h1>
-  </div>
-</div>
-
 # Mirror - A Reflective Journaling Platform
 
 ## 📝 About The Project
