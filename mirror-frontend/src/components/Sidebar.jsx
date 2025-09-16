@@ -4,10 +4,9 @@ import logo from "../assets/logo192.png";
 import flipLogo from "../assets/flip.png";
 import { Link } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
-import { FiMoon, FiSun } from "react-icons/fi";
 
 export default function Sidebar() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -103,26 +102,6 @@ export default function Sidebar() {
 
         {/* Bottom Section */}
         <div className="py-6 flex flex-col items-center space-y-4">
-          {/* Theme Toggle Button */}
-          <button
-            onClick={toggleTheme}
-            className={`flex items-center justify-center w-full hover:text-[#7a7ffb] ${isOpen ? 'px-4' : ''}`}
-            aria-label="Toggle dark/light theme"
-            title={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
-          >
-            {theme === 'dark' ? (
-              <>
-                <FiSun size={20} />
-                {isOpen && <span className="ml-2">Light Mode</span>}
-              </>
-            ) : (
-              <>
-                <FiMoon size={20} />
-                {isOpen && <span className="ml-2">Dark Mode</span>}
-              </>
-            )}
-          </button>
-          
           {/* Logout Button */}
           <button
             onClick={() => setShowConfirm(true)}

@@ -65,9 +65,23 @@ export default function JournalDashboard() {
     return () => clearTimeout(timer);
   }, []);
 
-  const currentMonthYear = new Date().toLocaleDateString("en-US", {
-    month: "long",
-    year: "numeric",
+  // Group journals by month
+  const groupedJournals = items.reduce((groups, journal) => {
+    const date = new Date(journal.createdAt);
+    const monthYear = date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+    if (!groups[monthYear]) {
+      groups[monthYear] = [];
+    }
+    groups[monthYear].push(journal);
+    return groups;
+  }, {});
+
+  // Sort months in descending order (newest first)
+  const sortedMonths = Object.keys(groupedJournals).sort((a, b) => {
+    return new Date(b + " 1") - new Date(a + " 1");
   });
 
   return (
@@ -89,7 +103,6 @@ export default function JournalDashboard() {
           <h1 className="text-4xl font-bold py-1" style={{
               fontFamily: "'Sansation', sans-serif",
             }}>Journal</h1>
-          <p className={`text-lg mb-3 ${theme === 'dark' ? 'text-white/80' : 'text-gray-600'}`}>{currentMonthYear}</p>
 
          
           <style>{`
@@ -121,37 +134,46 @@ export default function JournalDashboard() {
               No entries yet. Click <span className="font-semibold">+ New Entry</span> to start.
             </div>
           ) : (
-            <div className="space-y-4 staggered-fade-in">
-              {items.map((j) => {
-                const date = new Date(j.createdAt);
-                const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
-                const day = date.getDate().toString().padStart(2, "0");
-                return (
-                  <div
-                    key={j._id}
-                    onClick={() => navigate(`/journal/${j._id}`)}
-                    className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
-                      theme === 'dark'
-                        ? 'bg-black/90 text-white hover:bg-[#2b212f]'
-                        : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
-                    }`}
-                  >
-                    {/* Date */}
-                    <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
-                      theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
-                    }`}>
-                      <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
-                      <div className="text-2xl">{day}</div>
-                    </div>
-                    {/* Excerpt */}
-                    <div className="flex-1 overflow-hidden">
-                      <p className="text-sm leading-snug line-clamp-3">{j.excerpt}</p>
-                    </div>
-                    {/* (Optional) mood */}
-                    {j.mood && <span className="text-xl shrink-0">{j.mood}</span>}
+            <div className="space-y-8">
+              {sortedMonths.map((monthYear) => (
+                <div key={monthYear} className="staggered-fade-in">
+                  <h2 className={`text-lg mb-4 ${theme === 'dark' ? 'text-white/80' : 'text-gray-600'}`}>
+                    {monthYear}
+                  </h2>
+                  <div className="space-y-4">
+                    {groupedJournals[monthYear].map((j) => {
+                      const date = new Date(j.createdAt);
+                      const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+                      const day = date.getDate().toString().padStart(2, "0");
+                      return (
+                        <div
+                          key={j._id}
+                          onClick={() => navigate(`/journal/${j._id}`)}
+                          className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
+                            theme === 'dark'
+                              ? 'bg-black/90 text-white hover:bg-[#2b212f]'
+                              : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
+                          }`}
+                        >
+                          {/* Date */}
+                          <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
+                            theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
+                          }`}>
+                            <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
+                            <div className="text-2xl">{day}</div>
+                          </div>
+                          {/* Excerpt */}
+                          <div className="flex-1 overflow-hidden">
+                            <p className="text-sm leading-snug line-clamp-3">{j.excerpt}</p>
+                          </div>
+                          {/* (Optional) mood */}
+                          {j.mood && <span className="text-xl shrink-0">{j.mood}</span>}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
+                </div>
+              ))}
 
               {hasMore && (
                 <button

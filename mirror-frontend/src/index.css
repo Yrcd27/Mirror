@@ -1,2 +1,12 @@
 @import "tailwindcss";
 
+/* Global smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Add a class for controlling scroll-padding to account for fixed headers */
+body {
+  scroll-padding-top: 80px; /* Adjust based on your header height */
+}
+

@@ -32,3 +32,96 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
 }
+
+/* Floating controls styling */
+.floating-controls {
+  background-color: transparent;
+  color: var(--text-color);
+}
+
+/* Mobile menu styles */
+.mobile-menu-container {
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Enhanced styling for floating controls */
+.floating-controls button {
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animation for the navigation icon rotation */
+@keyframes rotateArrow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(180deg); }
+}
+
+.floating-controls {
+  background: transparent !important;
+}
+
+.floating-controls button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.floating-controls button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.floating-controls button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Ripple effect */
+.floating-controls button::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform .3s, opacity .5s;
+}
+
+.floating-controls button:active::after {
+  transform: scale(0, 0);
+  opacity: .3;
+  transition: 0s;
+}
+
+/* Media queries for floating controls on different screen sizes */
+@media (max-width: 768px) {
+  .floating-controls {
+    bottom: 1rem;
+    right: 1rem;
+  }
+  
+  .floating-controls button {
+    padding: 0.5rem;
+  }
+}
+
+/* Add some filter for better visibility */
+.dark .floating-controls button {
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+}
+
+.floating-controls button {
+  filter: drop-shadow(0 0 8px rgba(0, 0, 0, 0.1));
+}

@@ -2,27 +2,14 @@ import React from "react";
 import { Link } from "react-router-dom";
 import ScrollDownIndicator from "./ScrollDownIndicator";
 import { useTheme } from "../context/ThemeContext";
-import { FiMoon, FiSun } from "react-icons/fi";
 
 export default function HeroSection() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <section className={`px-6 md:px-12 pt-10 pb-0 min-h-[50vh] theme-transition relative ${
       theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'
     }`}>
-      {/* Theme Toggle Button - Right Corner */}
-      <button
-        onClick={toggleTheme}
-        className={`absolute top-6 right-6 p-3 rounded-full ${
-          theme === 'dark' 
-            ? 'bg-gray-800 text-yellow-400 hover:bg-gray-700' 
-            : 'bg-gray-200 text-blue-900 hover:bg-gray-300'
-        } transition-colors duration-300 z-10`}
-        aria-label="Toggle theme"
-      >
-        {theme === 'dark' ? <FiSun size={20} /> : <FiMoon size={20} />}
-      </button>
 
       <div className="w-full text-center space-y-6 max-w-6xl mx-auto">
         
