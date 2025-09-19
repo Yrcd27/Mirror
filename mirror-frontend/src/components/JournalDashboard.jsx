@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
@@ -20,6 +20,38 @@ function JournalSkeleton({ theme }) {
   );
 }
 
+// Memoized journal item component for better performance
+const JournalItem = React.memo(({ journal, theme, onClick }) => {
+  const date = new Date(journal.createdAt);
+  const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+  const day = date.getDate().toString().padStart(2, "0");
+
+  return (
+    <div
+      onClick={() => onClick(journal._id)}
+      className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
+        theme === 'dark'
+          ? 'bg-black/90 text-white hover:bg-[#2b212f]'
+          : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
+      }`}
+    >
+      {/* Date */}
+      <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
+        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
+      }`}>
+        <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
+        <div className="text-2xl">{day}</div>
+      </div>
+      {/* Excerpt */}
+      <div className="flex-1 overflow-hidden">
+        <p className="text-sm leading-snug line-clamp-3">{journal.excerpt}</p>
+      </div>
+      {/* (Optional) mood */}
+      {journal.mood && <span className="text-xl shrink-0">{journal.mood}</span>}
+    </div>
+  );
+});
+
 export default function JournalDashboard() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,58 +63,76 @@ export default function JournalDashboard() {
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  const loadPage = async (p = 1, replace = false) => {
+  // Memoized callback for navigation to prevent unnecessary re-renders
+  const handleJournalClick = useCallback((journalId) => {
+    navigate(`/journal/${journalId}`);
+  }, [navigate]);
+
+  const loadPage = useCallback(async (p = 1, replace = false) => {
     if (fetching.current) return;
     fetching.current = true;
     try {
       setLoading(p === 1 && replace); 
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_BASE_URL}/api/journals?limit=10&page=${p}`, {
-        headers: { Authorization: `Bearer ${token}` },
+      
+      // Add a simple cache-busting parameter to prevent stale data
+      const cacheBuster = replace ? `&_t=${Date.now()}` : '';
+      
+      const res = await axios.get(`${API_BASE_URL}/api/journals?limit=10&page=${p}${cacheBuster}`, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache'
+        },
       });
       const { items: newItems, hasMore: more } = res.data;
-      setItems(replace ? newItems : [...items, ...newItems]);
+      setItems(prev => replace ? newItems : [...prev, ...newItems]);
       setHasMore(more);
       setPage(p + 1);
-      setFadeIn(true);
+      if (p === 1) setFadeIn(true);
     } catch (err) {
       console.error(err);
     } finally {
       fetching.current = false;
       setLoading(false);
     }
-  };
+  }, []);
 
+  // Combined useEffect for initial load and fade in
   useEffect(() => {
     if (didFetchFirst.current) return;
     didFetchFirst.current = true;
     loadPage(1, true);
-  }, []);  
-  useEffect(() => {
+    
+    // Set fade in after a short delay
     const timer = setTimeout(() => {
       setFadeIn(true);
     }, 100);
+    
     return () => clearTimeout(timer);
-  }, []);
+  }, [loadPage]);
 
-  // Group journals by month
-  const groupedJournals = items.reduce((groups, journal) => {
-    const date = new Date(journal.createdAt);
-    const monthYear = date.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
+  // Memoized grouped journals to prevent unnecessary recalculations
+  const groupedJournals = useMemo(() => {
+    return items.reduce((groups, journal) => {
+      const date = new Date(journal.createdAt);
+      const monthYear = date.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+      });
+      if (!groups[monthYear]) {
+        groups[monthYear] = [];
+      }
+      groups[monthYear].push(journal);
+      return groups;
+    }, {});
+  }, [items]);
+
+  // Memoized sorted months
+  const sortedMonths = useMemo(() => {
+    return Object.keys(groupedJournals).sort((a, b) => {
+      return new Date(b + " 1") - new Date(a + " 1");
     });
-    if (!groups[monthYear]) {
-      groups[monthYear] = [];
-    }
-    groups[monthYear].push(journal);
-    return groups;
-  }, {});
-
-  // Sort months in descending order (newest first)
-  const sortedMonths = Object.keys(groupedJournals).sort((a, b) => {
-    return new Date(b + " 1") - new Date(a + " 1");
-  });
+  }, [groupedJournals]);
 
   return (
     <div
@@ -141,36 +191,14 @@ export default function JournalDashboard() {
                     {monthYear}
                   </h2>
                   <div className="space-y-4">
-                    {groupedJournals[monthYear].map((j) => {
-                      const date = new Date(j.createdAt);
-                      const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
-                      const day = date.getDate().toString().padStart(2, "0");
-                      return (
-                        <div
-                          key={j._id}
-                          onClick={() => navigate(`/journal/${j._id}`)}
-                          className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
-                            theme === 'dark'
-                              ? 'bg-black/90 text-white hover:bg-[#2b212f]'
-                              : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
-                          }`}
-                        >
-                          {/* Date */}
-                          <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
-                            theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
-                          }`}>
-                            <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
-                            <div className="text-2xl">{day}</div>
-                          </div>
-                          {/* Excerpt */}
-                          <div className="flex-1 overflow-hidden">
-                            <p className="text-sm leading-snug line-clamp-3">{j.excerpt}</p>
-                          </div>
-                          {/* (Optional) mood */}
-                          {j.mood && <span className="text-xl shrink-0">{j.mood}</span>}
-                        </div>
-                      );
-                    })}
+                    {groupedJournals[monthYear].map((j) => (
+                      <JournalItem
+                        key={j._id}
+                        journal={j}
+                        theme={theme}
+                        onClick={handleJournalClick}
+                      />
+                    ))}
                   </div>
                 </div>
               ))}

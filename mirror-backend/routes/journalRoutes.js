@@ -40,21 +40,36 @@ router.get("/", authMiddleware, async (req, res) => {
     const page  = Math.max(parseInt(req.query.page)  || 1, 1);
     const skip  = (page - 1) * limit;
 
-    
-    const docs = await Journal.find({ user_id: req.user.id })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select("_id content createdAt mood")   
-      .lean();
+    // Use aggregation pipeline for better performance
+    const pipeline = [
+      { $match: { user_id: req.user.id } },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $project: {
+          _id: 1,
+          createdAt: 1,
+          mood: 1,
+          excerpt: { $substr: ["$content", 0, 220] }
+        }
+      }
+    ];
+
+    const docs = await Journal.aggregate(pipeline);
 
     const items = docs.map(d => ({
       _id: d._id,
       createdAt: d.createdAt,
       mood: d.mood || "",
-      
-      excerpt: (d.content || "").slice(0, 220),
+      excerpt: d.excerpt || "",
     }));
+
+    // Set cache headers for better performance
+    res.set({
+      'Cache-Control': 'private, max-age=30', // Cache for 30 seconds
+      'ETag': `"${req.user.id}-${page}-${Date.now()}"`
+    });
 
     res.json({
       items,
@@ -63,6 +78,7 @@ router.get("/", authMiddleware, async (req, res) => {
       hasMore: items.length === limit
     });
   } catch (err) {
+    console.error('Error fetching journals:', err);
     res.status(500).json({ message: err.message });
   }
 });
