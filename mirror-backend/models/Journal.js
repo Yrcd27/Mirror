@@ -7,4 +7,7 @@ const journalSchema = new mongoose.Schema({
   image: { type: String }, // optional (URL or base64)
 }, { timestamps: true }); // createdAt, updatedAt automatically added
 
+// Add compound index for efficient queries
+journalSchema.index({ user_id: 1, createdAt: -1 });
+
 module.exports = mongoose.model("Journal", journalSchema);
