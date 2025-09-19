@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../config";
@@ -20,76 +20,19 @@ function JournalSkeleton({ theme }) {
   );
 }
 
-// Memoize JournalSkeleton to prevent unnecessary re-renders
-const MemoizedJournalSkeleton = React.memo(JournalSkeleton);
-
-// Memoized Journal Item Component
-const JournalItem = React.memo(({ journal, theme, onNavigate }) => {
-  const date = new Date(journal.createdAt);
-  const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
-  const day = date.getDate().toString().padStart(2, "0");
-
-  return (
-    <div
-      onClick={() => onNavigate(`/journal/${journal._id}`)}
-      className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
-        theme === 'dark'
-          ? 'bg-black/90 text-white hover:bg-[#2b212f]'
-          : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
-      }`}
-    >
-      {/* Date */}
-      <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
-        theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
-      }`}>
-        <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
-        <div className="text-2xl">{day}</div>
-      </div>
-      {/* Excerpt */}
-      <div className="flex-1 overflow-hidden">
-        <p className="text-sm leading-snug line-clamp-3">{journal.excerpt}</p>
-      </div>
-      {/* (Optional) mood */}
-      {journal.mood && <span className="text-xl shrink-0">{journal.mood}</span>}
-    </div>
-  );
-});
-
-const JournalDashboard = React.memo(() => {
+export default function JournalDashboard() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [fadeIn, setFadeIn] = useState(false);
-  const [lastFetchTime, setLastFetchTime] = useState(0);
   const fetching = useRef(false); 
   const didFetchFirst = useRef(false); 
   const navigate = useNavigate();
   const { theme } = useTheme();
 
-  // Cache duration: 5 minutes
-  const CACHE_DURATION = 5 * 60 * 1000;
-
-  // Memoize navigation callback
-  const handleNavigate = useCallback((path) => {
-    navigate(path);
-  }, [navigate]);
-
-  // Memoize the loadPage function to prevent recreation on every render
-  const loadPage = useCallback(async (p = 1, replace = false) => {
+  const loadPage = async (p = 1, replace = false) => {
     if (fetching.current) return;
-    
-    // Check cache for first page load
-    if (p === 1 && replace) {
-      const now = Date.now();
-      const cacheValid = (now - lastFetchTime) < CACHE_DURATION;
-      if (cacheValid && items.length > 0) {
-        setLoading(false);
-        setFadeIn(true);
-        return;
-      }
-    }
-    
     fetching.current = true;
     try {
       setLoading(p === 1 && replace); 
@@ -98,29 +41,23 @@ const JournalDashboard = React.memo(() => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const { items: newItems, hasMore: more } = res.data;
-      setItems(prevItems => replace ? newItems : [...prevItems, ...newItems]);
+      setItems(replace ? newItems : [...items, ...newItems]);
       setHasMore(more);
       setPage(p + 1);
       setFadeIn(true);
-      
-      // Update cache timestamp
-      if (p === 1 && replace) {
-        setLastFetchTime(Date.now());
-      }
     } catch (err) {
       console.error(err);
     } finally {
       fetching.current = false;
       setLoading(false);
     }
-  }, [items.length, lastFetchTime, CACHE_DURATION]);
+  };
 
   useEffect(() => {
     if (didFetchFirst.current) return;
     didFetchFirst.current = true;
     loadPage(1, true);
-  }, [loadPage]);
-
+  }, []);  
   useEffect(() => {
     const timer = setTimeout(() => {
       setFadeIn(true);
@@ -128,29 +65,24 @@ const JournalDashboard = React.memo(() => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Memoize expensive calculations to prevent recalculation on every render
-  const { groupedJournals, sortedMonths } = useMemo(() => {
-    // Group journals by month
-    const grouped = items.reduce((groups, journal) => {
-      const date = new Date(journal.createdAt);
-      const monthYear = date.toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-      });
-      if (!groups[monthYear]) {
-        groups[monthYear] = [];
-      }
-      groups[monthYear].push(journal);
-      return groups;
-    }, {});
-
-    // Sort months in descending order (newest first)
-    const sorted = Object.keys(grouped).sort((a, b) => {
-      return new Date(b + " 1") - new Date(a + " 1");
+  // Group journals by month
+  const groupedJournals = items.reduce((groups, journal) => {
+    const date = new Date(journal.createdAt);
+    const monthYear = date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
     });
+    if (!groups[monthYear]) {
+      groups[monthYear] = [];
+    }
+    groups[monthYear].push(journal);
+    return groups;
+  }, {});
 
-    return { groupedJournals: grouped, sortedMonths: sorted };
-  }, [items]);
+  // Sort months in descending order (newest first)
+  const sortedMonths = Object.keys(groupedJournals).sort((a, b) => {
+    return new Date(b + " 1") - new Date(a + " 1");
+  });
 
   return (
     <div
@@ -196,7 +128,7 @@ const JournalDashboard = React.memo(() => {
 
           {/* List / Skeleton / Empty */}
           {loading ? (
-            <MemoizedJournalSkeleton theme={theme} />
+            <JournalSkeleton theme={theme} />
           ) : items.length === 0 ? (
             <div className={`fade-in ${theme === 'dark' ? 'text-white/70' : 'text-gray-500'}`}>
               No entries yet. Click <span className="font-semibold">+ New Entry</span> to start.
@@ -209,29 +141,50 @@ const JournalDashboard = React.memo(() => {
                     {monthYear}
                   </h2>
                   <div className="space-y-4">
-                    {groupedJournals[monthYear].map((j) => (
-                      <JournalItem
-                        key={j._id}
-                        journal={j}
-                        theme={theme}
-                        onNavigate={handleNavigate}
-                      />
-                    ))}
+                    {groupedJournals[monthYear].map((j) => {
+                      const date = new Date(j.createdAt);
+                      const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
+                      const day = date.getDate().toString().padStart(2, "0");
+                      return (
+                        <div
+                          key={j._id}
+                          onClick={() => navigate(`/journal/${j._id}`)}
+                          className={`px-6 py-4 rounded-2xl cursor-pointer transition duration-200 shadow-md flex items-center gap-4 h-30 max-w-[950px] w-full overflow-hidden ${
+                            theme === 'dark'
+                              ? 'bg-black/90 text-white hover:bg-[#2b212f]'
+                              : 'bg-white text-black hover:bg-gray-50 border border-gray-200'
+                          }`}
+                        >
+                          {/* Date */}
+                          <div className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl font-bold shrink-0 ${
+                            theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'
+                          }`}>
+                            <div className={`text-xs uppercase ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{weekday}</div>
+                            <div className="text-2xl">{day}</div>
+                          </div>
+                          {/* Excerpt */}
+                          <div className="flex-1 overflow-hidden">
+                            <p className="text-sm leading-snug line-clamp-3">{j.excerpt}</p>
+                          </div>
+                          {/* (Optional) mood */}
+                          {j.mood && <span className="text-xl shrink-0">{j.mood}</span>}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
 
-              {hasMore && !loading && (
+              {hasMore && (
                 <button
                   onClick={() => loadPage(page)}
-                  disabled={fetching.current}
-                  className={`mt-4 px-4 py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed ${
+                  className={`mt-4 px-4 py-2 rounded transition ${
                     theme === 'dark'
-                      ? 'bg-white/10 hover:bg-white/20 text-white disabled:hover:bg-white/10'
-                      : 'bg-gray-200 hover:bg-gray-300 text-black disabled:hover:bg-gray-200'
+                      ? 'bg-white/10 hover:bg-white/20 text-white'
+                      : 'bg-gray-200 hover:bg-gray-300 text-black'
                   }`}
                 >
-                  {fetching.current ? 'Loading...' : 'Load more'}
+                  Load more
                 </button>
               )}
             </div>
@@ -240,6 +193,4 @@ const JournalDashboard = React.memo(() => {
       </div>
     </div>
   );
-});
-
-export default JournalDashboard;
+}
