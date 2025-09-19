@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FiSmile, FiTrash, FiSave, FiCalendar } from "react-icons/fi";
 import { API_BASE_URL } from "../config";
 import { useTheme } from "../context/ThemeContext";
@@ -10,6 +10,7 @@ export default function NewEntry() {
   const [mood, setMood] = useState("");
   const [showMoodPicker, setShowMoodPicker] = useState(false);
   const { theme } = useTheme();
+  const navigate = useNavigate();
 
   const moodOptions = [
     { label: "happy", emoji: "😃" },
@@ -44,7 +45,7 @@ export default function NewEntry() {
         },
       });
 
-      window.location.href = "/dashboard";
+      navigate("/dashboard");
     } catch (err) {
       console.error("Error saving journal:", err);
     }

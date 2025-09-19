@@ -2,11 +2,12 @@ import React, { useEffect, useState, useCallback } from "react";
 import { HiOutlineLogout, HiMenuAlt3, HiX } from "react-icons/hi";
 import logo from "../assets/logo192.png";
 import flipLogo from "../assets/flip.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Sidebar() {
   const { theme } = useTheme();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(true);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -56,7 +57,7 @@ export default function Sidebar() {
     setLoggingOut(true);
     setTimeout(() => {
       localStorage.removeItem("token");
-      window.location.href = "/";
+      navigate("/");
     }, 500); // small delay for UI feedback
   };
 
