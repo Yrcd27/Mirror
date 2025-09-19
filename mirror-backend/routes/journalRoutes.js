@@ -40,22 +40,25 @@ router.get("/", authMiddleware, async (req, res) => {
     const page  = Math.max(parseInt(req.query.page)  || 1, 1);
     const skip  = (page - 1) * limit;
 
-    
+    // Add performance optimization with lean() and select only needed fields
     const docs = await Journal.find({ user_id: req.user.id })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .select("_id content createdAt mood")   
-      .lean();
+      .lean(); // Use lean() for better performance
 
     const items = docs.map(d => ({
       _id: d._id,
       createdAt: d.createdAt,
       mood: d.mood || "",
-      
-      excerpt: (d.content || "").slice(0, 220),
+      // More efficient excerpt generation
+      excerpt: (d.content || "").substring(0, 220),
     }));
 
+    // Set cache headers for better performance
+    res.set('Cache-Control', 'private, max-age=300'); // 5 minutes cache
+    
     res.json({
       items,
       page,
@@ -63,7 +66,8 @@ router.get("/", authMiddleware, async (req, res) => {
       hasMore: items.length === limit
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error fetching journals:', err);
+    res.status(500).json({ message: 'Failed to fetch journals' });
   }
 });
 
