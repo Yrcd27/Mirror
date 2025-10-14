@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const mongoSanitize = require("express-mongo-sanitize");
 require("dotenv").config();
 
 const authRoutes = require("./routes/authRoutes");
@@ -21,6 +22,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+// Apply MongoDB sanitization to prevent NoSQL injection
+app.use(mongoSanitize());
 
 // Root endpoint
 app.get("/", (req, res) => {

@@ -22,8 +22,13 @@ router.post("/signup", async (req, res) => {
       });
     }
 
-    // Check if email already exists
-    const existingUser = await User.findOne({ email });
+    // Validate email type and format
+    if (typeof email !== 'string' || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(400).json({ message: "Invalid email format" });
+    }
+
+    // Check if email already exists - using type-safe query
+    const existingUser = await User.findOne({ email: String(email).toLowerCase() });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
@@ -51,8 +56,13 @@ router.post("/login", async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Find user
-    const user = await User.findOne({ email });
+    // Validate email type and format
+    if (typeof email !== 'string' || !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    // Find user - using type-safe query
+    const user = await User.findOne({ email: String(email).toLowerCase() });
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
