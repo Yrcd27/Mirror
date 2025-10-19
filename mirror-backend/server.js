@@ -23,7 +23,14 @@ app.use(cors({
 }));
 app.use(express.json());
 // Apply MongoDB sanitization to prevent NoSQL injection
-app.use(mongoSanitize());
+// Use a custom sanitizer function that doesn't directly modify req.query
+app.use((req, res, next) => {
+  if (req.body) {
+    const sanitized = mongoSanitize.sanitize(req.body);
+    req.body = sanitized;
+  }
+  next();
+});
 
 // Root endpoint
 app.get("/", (req, res) => {
