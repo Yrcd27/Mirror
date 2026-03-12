@@ -1,4 +1,19 @@
-# Mirror - A Reflective Journaling Platform
+<div align="center">
+
+# Mirror - The Reflective Journaling Platform
+
+A reflective journaling platform with guided prompts where users can securely track thoughts, emotions, and personal growth through customizable interfaces.
+
+[![JavaScript](https://img.shields.io/badge/JavaScript-96.8%25-F7DF1E?style=flat&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=black)](https://reactjs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-Backend-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-47A248?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com)
+[![Express](https://img.shields.io/badge/Express-Framework-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com)
+[![JWT](https://img.shields.io/badge/JWT-Authentication-000000?style=flat&logo=json-web-tokens&logoColor=white)](https://jwt.io)
+[![CSS3](https://img.shields.io/badge/CSS3-2.0%25-1572B6?style=flat&logo=css3&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/CSS)
+[![HTML5](https://img.shields.io/badge/HTML5-1.2%25-E34F26?style=flat&logo=html5&logoColor=white)](https://developer.mozilla.org/en-US/docs/Web/HTML)
+
+</div>
 
 ## 📝 About The Project
 
